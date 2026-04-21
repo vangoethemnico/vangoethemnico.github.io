@@ -1,0 +1,103 @@
+body {
+  background-color: #f8f9ff;
+  color: #191c20;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.font-weight
+{
+ font-weight: 500;
+}
+
+.glass-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(99, 82, 161, 0.05);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+
+.tracking-ultra-tight
+{
+      letter-spacing: -0.10em;
+}
+
+.btn-primary {
+  background-color: #6352a1;
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-secondary {
+  border: 1px solid rgba(99, 82, 161, 0.2);
+  color: #6352a1;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-secondary:hover { background-color: rgba(99, 82, 161, 0.05); }
+
+.session-card {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  background: white;
+  border-radius: 2.5rem;
+  border: 1px solid rgba(179, 157, 219, 0.2);
+  cursor: pointer;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.session-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(99, 82, 161, 0.15);
+  border-color: rgba(99, 82, 161, 0.2);
+}
+
+/* Modal specific styles */
+#session-modal.active { display: flex; }
+#modal-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#session-modal.active #modal-backdrop { opacity: 1; }
+
+#modal-content {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#session-modal.active #modal-content {
+  opacity: 1;
+  transform: scale(1);
+}
+
+body.modal-open { overflow: hidden; }
+
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 82, 161, 0.2); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 82, 161, 0.4); }
+.custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(99, 82, 161, 0.2) transparent; }
+
+.transition-content { transition: opacity 0.3s ease, transform 0.3s ease; }
+.founder-layer { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
