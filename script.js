@@ -2,6 +2,7 @@
 const TRANSLATIONS = {
   nl: {
     lang_toggle: "NL",
+    page_title: "Al zonder gedoe.",
     nav_start: "Start",
     nav_sessions: "Sessies",
     nav_about: "Over ons",
@@ -51,6 +52,7 @@ const TRANSLATIONS = {
   },
   en: {
     lang_toggle: "EN",
+    page_title: "AI without the hype.",
     nav_start: "Home",
     nav_sessions: "Sessions",
     nav_about: "About Us",
@@ -122,6 +124,7 @@ function updateLanguage() {
   document.querySelectorAll('.lang-label').forEach(el => {
     el.textContent = TRANSLATIONS[currentLang].lang_toggle;
   });
+  document.title = TRANSLATIONS[currentLang].page_title;
   lucide.createIcons();
 }
 
