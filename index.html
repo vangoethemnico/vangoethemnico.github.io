@@ -6,12 +6,13 @@
   <title>Al zonder gedoe.</title>
   
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Preload Critical Fonts -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" as="style">
+  
+  <link rel="stylesheet" href="output.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@0.473.0/dist/umd/lucide.min.js"></script>
 </head>
 <body class="min-h-screen font-sans">
   <!-- Navbar -->
@@ -71,8 +72,8 @@
   <!-- Hero Section -->
   <section id="start" class="relative pt-16 pb-48 px-6 md:px-20 overflow-hidden">
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      <canvas id="hero-network-canvas" class="absolute inset-0 w-full h-full" style="mask-image: linear-gradient(to right, transparent 0%, black 50%); opacity: 0.8;"></canvas>
-      <div id="hero-blur-overlay" class="absolute inset-0"></div>
+      <canvas id="hero-network-canvas" class="absolute inset-0 w-full h-full" style="mask-image: linear-gradient(to right, transparent 0%, black 50%); opacity: 0.8; will-change: transform, opacity, filter;"></canvas>
+      <div id="hero-blur-overlay" class="absolute inset-0" style="will-change: transform, backdrop-filter, filter;"></div>
     </div>
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
     <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
@@ -126,7 +127,7 @@
           </div>
           <p data-i18n="session_0_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Heb je je ooit al afgevraagd welke magie er verscholen zit onder grote taalmodellen zoals ChatGPT, Claude of Gemini?</p>
           <div data-i18n="session_0_detail" class="detail-text hidden">We doorlopen samen de basisconcepten van AI modellen en geven antwoorden op vragen als: Waarom begrijpt zo'n model me soms wel en soms ook weer helemaal niet? Waarom komt er steeds een ander antwoord uit? In hoeverre denkt zo'n model zoals een mens? <br/><br/>De wonden die je lessen wiskunde en biologie hebben achtergelaten op je ziel? Sorry daar gaan we toch nog eens aan krabben. Maar geen zorgen: we houden het licht en luchtig en zorgen dat iedereen mee kan volgen.</div>
-          <img src="https://picsum.photos/seed/tech/800/600" class="card-image hidden" />
+          <img src="assets/under-the-hood.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
 
@@ -145,7 +146,7 @@
           </div>
           <p data-i18n="session_1_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">In deze sessie nemen we je mee door de weg die AI heeft afgelegd, vanwaar we komen en waar we vandaag staan.</p>
           <div data-i18n="session_1_detail" class="detail-text hidden">We tonen wat toepassingen van wat AI vandaag kan, maar proberen ook al een blik op de toekomst te werpen. Niemand kan de toekomst exact voorspellen uiteraard, maar je krijgt de ingrediënten om zelf je mening te vormen.</div>
-          <img src="https://picsum.photos/seed/inspire/800/600" class="card-image hidden" />
+          <img src="assets/inspiration.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
 
@@ -164,7 +165,7 @@
           </div>
           <p data-i18n="session_2_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Van beeldgeneratie tot muziek. We overlopen prompting tips en laten zien hoe je van jezelf zo'n perfect studio portret kan maken.</p>
           <div data-i18n="session_2_detail" class="detail-text hidden">Ook video's en muziek liggen binnen handbereik. Beter goed gepikt dan slecht gemaakt: we laten zien hoe je een bepaalde stijl kan overnemen op je eigen creaties.</div>
-          <img src="https://picsum.photos/seed/art/800/600" class="card-image hidden" />
+          <img src="assets/creative.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
 
@@ -182,7 +183,7 @@
           </div>
           <p data-i18n="session_3_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">De meeste mensen gebruiken slechts een fractie van waar AI toe in staat is.</p>
           <div data-i18n="session_3_detail" class="detail-text hidden">Zelf door uitsluitend gebruik te maken van gratis tools kom je al een heel eind en maak je met gemak je eigen applicaties. We geven inspiratie met praktische voorbeelden en tonen stap voor stap hoe je daar aan begint zonder enige voorkennis.</div>
-          <img src="https://picsum.photos/seed/build/800/600" class="card-image hidden" />
+          <img src="assets/tinkering.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
 
@@ -200,7 +201,7 @@
           </div>
           <p data-i18n="session_4_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Prompting: hoe je opdrachten geeft aan AI modellen.</p>
           <div data-i18n="session_4_detail" class="detail-text hidden">Net zoals we met z'n allen hebben leren lezen, fietsen en googelen; is ook dit een kunde die heel simpel wordt eens je het kan. Eens je de truukjes leert zal je merken dat je resultaten beter worden en dat zo'n taalmodel je plots beter begint te verstaan.</div>
-          <img src="https://picsum.photos/seed/prompt/800/600" class="card-image hidden" />
+          <img src="assets/prompting.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
 
@@ -218,7 +219,7 @@
           </div>
           <p data-i18n="session_5_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">AI is de perfecte partner in crime om te studeren of informatie te verwerken.</p>
           <div data-i18n="session_5_detail" class="detail-text hidden">We tonen stap voor stap hoe je uitsluitend met gratis tools aan de slag kunt gaan en welke ongelofelijke resultaten er mee te halen zijn voor school, werk of hobby.</div>
-          <img src="https://picsum.photos/seed/study/800/600" class="card-image hidden" />
+          <img src="assets/learning.jpeg" class="card-image hidden" loading="lazy" />
           <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
         </div>
       </div>
@@ -239,7 +240,7 @@
           <div class="space-y-4">
             <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative cursor-pointer border border-slate-100" onclick="toggleFounder('nico')">
               <div id="founder-front-nico" class="founder-layer absolute inset-0 w-full h-full z-20 opacity-100 translate-x-0">
-                <img src="nico donker.png" alt="Nico Van Goethem" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" />
+                <img src="assets/nico-donker.png" alt="Nico Van Goethem" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
                 <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end">
                   <span data-i18n="founder_click_bio" class="text-white/70 text-[10px] font-weight uppercase tracking-widest mb-1">Klik voor bio</span>
                 </div>
@@ -248,7 +249,7 @@
                 <div class="flex-none">
                   <button class="mb-6 text-primary hover:opacity-70"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                   <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="nico donker.png" class="w-full h-full object-cover" /></div>
+                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="assets/nico-donker.png" class="w-full h-full object-cover" loading="lazy" /></div>
                     <div>
                       <h4 class="text-lg font-weight leading-tight">Nico Van Goethem</h4>
                       <p data-i18n="founder_nico_role" class="text-primary font-bold text-[9px] uppercase">Spreker</p>
@@ -272,7 +273,7 @@
           <div class="space-y-4">
             <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative cursor-pointer border border-slate-100" onclick="toggleFounder('sofie')">
               <div id="founder-front-sofie" class="founder-layer absolute inset-0 w-full h-full z-20 opacity-100 translate-x-0">
-                <img src="sofie donker2.png" alt="Sofie Embrechts Podevyn" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" />
+                <img src="assets/sofie-donker2.png" alt="Sofie Embrechts Podevyn" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
                 <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end">
                   <span data-i18n="founder_click_bio" class="text-white/70 text-[10px] font-weight uppercase tracking-widest mb-1">Klik voor bio</span>
                 </div>
@@ -281,7 +282,7 @@
                 <div class="flex-none">
                   <button class="mb-6 text-primary hover:opacity-70"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                   <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="sofie donker2.png" class="w-full h-full object-cover" /></div>
+                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="assets/sofie-donker2.png" class="w-full h-full object-cover" loading="lazy" /></div>
                     <div>
                       <h4 class="text-lg font-weight leading-tight">Sofie Embrechts Podevyn</h4>
                       <p data-i18n="founder_sofie_role" class="text-primary font-bold text-[9px] uppercase">Boekingen</p>
@@ -342,11 +343,15 @@
   <!-- Modal Structure -->
   <div id="session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-8">
     <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onclick="closeSessionModal()"></div>
-    <div id="modal-content" class="relative bg-white rounded-[2.5rem] w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl cursor-pointer" onclick="closeSessionModal()">
-      <button onclick="closeSessionModal()" class="absolute top-6 right-6 z-50 w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-primary hover:text-white transition-all">
-        <i data-lucide="x" class="w-5 h-5"></i>
+    
+    <div class="relative w-full max-w-5xl">
+      <!-- Connected Close Button Blob -->
+      <button onclick="closeSessionModal()" class="absolute -top-3 -right-3 md:-top-5 md:-right-5 z-[110] w-12 h-12 md:w-14 md:h-14 rounded-full bg-white flex items-center justify-center text-primary shadow-2xl hover:scale-110 transition-transform">
+        <i data-lucide="x" class="w-6 h-6 md:w-8 md:h-8"></i>
       </button>
-      <div id="modal-content-inner" class="h-full"></div>
+      <div id="modal-content" class="relative bg-white rounded-[2.5rem] w-full max-h-[90vh] overflow-hidden shadow-2xl cursor-pointer" onclick="closeSessionModal()">
+        <div id="modal-content-inner" class="h-full"></div>
+      </div>
     </div>
   </div>
 

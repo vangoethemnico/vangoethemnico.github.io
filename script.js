@@ -1,23 +1,3 @@
-// Tailwind Configuration
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-      },
-      colors: {
-        primary: "#6352a1",
-        "primary-container": "#ae9bf1",
-        secondary: "#176c43",
-        "secondary-container": "#a3f4c0",
-        background: "#f8f9ff",
-        surface: "#ffffff",
-        "surface-container": "#f2f3f9",
-      }
-    }
-  }
-}
-
 // Translations
 const TRANSLATIONS = {
   nl: {
@@ -49,7 +29,7 @@ const TRANSLATIONS = {
     session_2_detail: "Ook video's en muziek liggen binnen handbereik. Beter goed gepikt dan slecht gemaakt: we laten zien hoe je een bepaalde stijl kan overnemen op je eigen creaties.",
     session_3_title: "Knutselen met AI",
     session_3_intro: "De meeste mensen gebruiken slechts een fractie van waar AI toe in staat is.",
-    session_3_detail: "Zelf door uitsluitend gebruik te maken van gratis tools kom je al een heel eind en maak je met gemak je eigen applicaties. We geven inspiratie met praktische voorbeelden en tonen stap voor stap hoe je daar aan begint zonder enige voorkennis.",
+    session_3_detail: "Zelfs door uitsluitend gebruik te maken van gratis tools kom je al een heel eind en maak je met gemak je eigen applicaties. We geven inspiratie met praktische voorbeelden en tonen stap voor stap hoe je daar aan begint zonder enige voorkennis.",
     session_4_title: "Prompting basics",
     session_4_intro: "Prompting: hoe je opdrachten geeft aan AI modellen.",
     session_4_detail: "Net zoals we met z'n allen hebben leren lezen, fietsen en googelen; is ook dit een kunde die heel simpel wordt eens je het kan. Eens je de truukjes leert zal je merken dat je resultaten beter worden en dat zo'n taalmodel je plots beter begint te verstaan.",
@@ -168,7 +148,7 @@ window.openSessionModal = function(id) {
   // Clone the header, intro/detail text, and image for the modal
   const header = card.querySelector('.card-header').innerHTML;
   const detail = card.querySelector('.detail-text').innerHTML;
-  const imageSrc = card.querySelector('.card-image').src;
+  const imageSrc = card.querySelector('.card-image').getAttribute('src');
 
   modalBody.innerHTML = `
     <div class="flex flex-col md:flex-row h-full items-stretch">
@@ -177,7 +157,7 @@ window.openSessionModal = function(id) {
         <div class="text-slate-600 text-lg leading-relaxed">${detail}</div>
       </div>
       <div class="hidden md:block w-1/3 min-h-full">
-        <img src="${imageSrc}" class="w-full h-full object-cover grayscale opacity-80" />
+        <img src="${imageSrc}" class="w-full h-full object-cover" loading="lazy" decoding="async" />
       </div>
     </div>
   `;
@@ -192,6 +172,29 @@ window.closeSessionModal = function() {
   modal.classList.remove('active');
   document.body.classList.remove('modal-open');
 };
+
+// Function to update mobile navigation links based on the currently active desktop link
+function updateMobileMenuLinksOnOpen() {
+  const mobileMenu = document.getElementById('mobile-menu');
+  const isMobileMenuOpen = mobileMenu && !mobileMenu.classList.contains('translate-x-full');
+
+  if (isMobileMenuOpen) {
+    let activeHref = null;
+    navLinks.forEach(link => {
+      if (link.classList.contains('text-primary')) { // Assuming text-primary means active
+        activeHref = link.getAttribute('href');
+      }
+    });
+
+    mobileNavLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === activeHref;
+      link.classList.toggle('text-slate-400', isActive);
+      link.classList.toggle('pointer-events-none', isActive);
+      link.classList.toggle('text-slate-900', !isActive);
+      link.classList.toggle('pointer-events-auto', !isActive);
+    });
+  }
+}
 
 // Founder Logic
 window.toggleFounder = function(id) {
@@ -226,6 +229,8 @@ window.toggleMobileMenu = function() {
   } else {
     menu.classList.remove('translate-x-full');
     document.body.classList.add('overflow-hidden');
+    // When opening the menu, update the active state
+    updateMobileMenuLinksOnOpen();
   }
 };
 
@@ -240,6 +245,7 @@ document.querySelectorAll('#mobile-menu a').forEach(link => {
 
 // Smooth Scroll and Scroll Spy Logic
 const navLinks = document.querySelectorAll('nav .hidden.md\\:flex a[href^="#"]');
+const mobileNavLinks = document.querySelectorAll('#mobile-menu nav a[href^="#"]');
 const sections = document.querySelectorAll('section[id]');
 
 const activeClasses = ['text-primary', 'border-primary/40'];
@@ -287,6 +293,19 @@ const observerCallback = (entries) => {
         link.classList.toggle('text-slate-500', !isActive);
         link.classList.toggle('border-transparent', !isActive);
       });
+
+  // Update mobile nav links if menu is open
+  const mobileMenu = document.getElementById('mobile-menu');
+  const isMobileMenuOpen = mobileMenu && !mobileMenu.classList.contains('translate-x-full');
+  if (isMobileMenuOpen) {
+    mobileNavLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('text-slate-400', isActive);
+      link.classList.toggle('pointer-events-none', isActive);
+      link.classList.toggle('text-slate-900', !isActive);
+      link.classList.toggle('pointer-events-auto', !isActive);
+    });
+  }
     }
   });
 };
@@ -365,6 +384,7 @@ function initHeroNetwork() {
   let nodes = [];
   let signals = [];
   let width, height;
+  let isAnimate = true;
   const mouse = { x: null, y: null };
 
   window.addEventListener('mousemove', (e) => {
@@ -455,15 +475,34 @@ function initHeroNetwork() {
 
   function resize() {
     const parent = canvas.parentElement;
-    width = parent.offsetWidth;
-    height = parent.offsetHeight;
+    const newWidth = parent.offsetWidth;
+    const newHeight = parent.offsetHeight;
+
+    if (newWidth === width && newHeight === height && nodes.length === config.count) return;
+
+    // Calculate scale ratios to keep nodes in the same relative position
+    const ratioX = width ? newWidth / width : 1;
+    const ratioY = height ? newHeight / height : 1;
+
+    width = newWidth;
+    height = newHeight;
     canvas.width = width;
     canvas.height = height;
-    nodes = [];
-    for (let i = 0; i < config.count; i++) nodes.push(new Node());
+
+    nodes.forEach(node => {
+      node.baseX *= ratioX;
+      node.baseY *= ratioY;
+    });
+
+    if (nodes.length < config.count) {
+      for (let i = nodes.length; i < config.count; i++) nodes.push(new Node());
+    } else if (nodes.length > config.count) {
+      nodes = nodes.slice(0, config.count);
+    }
   }
 
   function animate() {
+    if (!isAnimate) return;
     ctx.clearRect(0, 0, width, height);
     
     // Connections
@@ -496,7 +535,22 @@ function initHeroNetwork() {
     requestAnimationFrame(animate);
   }
 
-  window.addEventListener('resize', resize);
+  // Pause animation when not visible to save resources
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    const wasVisible = isAnimate;
+    isAnimate = entries[0].isIntersecting;
+    if (isAnimate && !wasVisible) {
+      animate(); // Restart animation loop if it was paused
+    }
+  }, { threshold: 0.05 });
+
+  visibilityObserver.observe(canvas);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 100);
+  });
   resize();
   applyStyles();
   animate();
