@@ -3,6 +3,7 @@ const TRANSLATIONS = {
   nl: {
     lang_toggle: "NL",
     page_title: "Al zonder gedoe.",
+    meta_desc: "AI uitgelegd in simpele mensentaal. Ontdek onze sessies over ChatGPT, creativiteit, prompting en meer. Zonder gedoe en voor iedereen.",
     nav_start: "Start",
     nav_sessions: "Sessies",
     nav_about: "Over ons",
@@ -53,6 +54,7 @@ const TRANSLATIONS = {
   en: {
     lang_toggle: "EN",
     page_title: "AI without the hype.",
+    meta_desc: "AI explained in plain language. Discover our sessions on ChatGPT, creativity, prompting, and more. Without the hype and for everyone.",
     nav_start: "Home",
     nav_sessions: "Sessions",
     nav_about: "About Us",
@@ -125,6 +127,13 @@ function updateLanguage() {
     el.textContent = TRANSLATIONS[currentLang].lang_toggle;
   });
   document.title = TRANSLATIONS[currentLang].page_title;
+  
+  // Update SEO Meta tags
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', TRANSLATIONS[currentLang].meta_desc);
+  document.querySelectorAll('meta[property="og:description"], meta[name="twitter:description"]').forEach(el => el.setAttribute('content', TRANSLATIONS[currentLang].meta_desc));
+  document.querySelectorAll('meta[property="og:title"], meta[name="twitter:title"]').forEach(el => el.setAttribute('content', TRANSLATIONS[currentLang].page_title));
+
   lucide.createIcons();
 }
 

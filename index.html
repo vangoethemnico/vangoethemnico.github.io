@@ -9,7 +9,7 @@
   <!-- Preload Critical Fonts -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" as="style">
   
-  <link rel="stylesheet" href="output.css">
+  <link rel="stylesheet" href="output.css?v=1.0.0">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="https://unpkg.com/lucide@0.473.0/dist/umd/lucide.min.js"></script>
@@ -480,6 +480,22 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Al zonder gedoe.",
+      "alternateName": "AI without the hype.",
+      "description": "AI explained in plain language for everyone.",
+      "url": "https://aizondergedoe.be",
+      "founders": [
+        { "@type": "Person", "name": "Nico Van Goethem" },
+        { "@type": "Person", "name": "Sofie Embrechts Podevyn" }
+      ]
+    }
+  </script>
+
+  <script src="script.js?v=1.0.0"></script>
 </body>
 </html>
