@@ -19,7 +19,7 @@ const TRANSLATIONS = {
     label_core: "Hoofdsessie",
     label_supplement: "Aanvulling",
     btn_more_info: "Meer info",
-    session_0_title: "Onder de motorkap",
+    session_0_title: "Hoe werkt AI?",
     session_0_intro: "Heb je je ooit al afgevraagd welke magie er verscholen zit onder grote taalmodellen zoals ChatGPT, Claude of Gemini? Net zoals je geen garagist hoeft te zijn om een auto te besturen, helpt het wel om te weten hoe een koppeling werkt. Dat is bij AI net hetzelfde: als je de basisconcepten begrijpt, zal je merken dat je er veel meer mee kan. In deze sessie nemen we je mee onder de motorkap van AI modellen en leggen we uit hoe ze werken, maar dan simpel en zonder gedoe.",
     session_0_detail: "We doorlopen samen de basisconcepten van AI modellen en geven antwoorden op vragen als: Waarom begrijpt zo'n model me soms wel en soms ook weer helemaal niet? Waarom komt er steeds een ander antwoord uit? In hoeverre denkt zo'n model zoals een mens? <br/><br/>De wonden die je lessen wiskunde en biologie hebben achtergelaten op je ziel? Sorry daar gaan we toch nog eens aan krabben. Maar geen zorgen: we houden het licht en luchtig en zorgen dat iedereen mee kan volgen. Een spelletje 'wie is het?' en een handvol minions helpt ons de magie te doorprikken en je de basis te geven om als een echte AI-fluisteraar aan de slag te gaan.",
     session_1_title: "Inspiratie",
@@ -156,20 +156,46 @@ window.openSessionModal = function(id) {
   
   // Clone the header, intro/detail text, and image for the modal
   const header = card.querySelector('.card-header').innerHTML;
+  const intro = card.querySelector('.intro-text').innerHTML;
   const detail = card.querySelector('.detail-text').innerHTML;
-  const imageSrc = card.querySelector('.card-image').getAttribute('src');
+  const imageSrc = card.querySelector('.card-image').getAttribute('data-detail-image');
 
   modalBody.innerHTML = `
-    <div class="flex flex-col md:flex-row h-full items-stretch">
-      <div class="flex-1 p-8 md:p-14 flex flex-col">
-        <div class="flex-none mb-8">
-          ${header}
+    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-[2.5rem] min-h-0">
+      <!-- Left Column: Text Block (Scrollable) -->
+      <div class="flex-1 relative flex flex-col min-w-0 min-h-0">
+        <!-- Mobile Background Visual: Blurred image behind text (only for mobile) -->
+        <div class="md:hidden absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+          <img src="${imageSrc}" class="w-full h-full object-cover scale-150 blur-3xl opacity-30" />
+          <div class="absolute inset-0 bg-white/80"></div>
         </div>
-        <div class="flex-1 overflow-y-auto custom-scrollbar text-slate-600 text-lg leading-relaxed">
-          ${detail}
+
+        <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
+          <div class="flex flex-col min-h-full">
+            <!-- Sticky Header -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50">
+              ${header}
+            </div>
+            
+            <!-- Content Block -->
+            <div class="px-8 md:px-14 pt-8 pb-24 text-slate-600 text-lg leading-relaxed relative z-10">
+              <div class="font-bold text-slate-900 mb-6 text-xl leading-snug">${intro}</div>
+              <div>${detail}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Indicators -->
+        <div id="scroll-fade" class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-30 transition-opacity duration-300 opacity-0"></div>
+        <div id="scroll-arrow" class="absolute bottom-10 left-1/2 -translate-x-1/2 text-primary animate-bounce pointer-events-none opacity-0 transition-opacity duration-300 z-40">
+          <i data-lucide="chevron-down" class="w-10 h-10"></i>
         </div>
       </div>
-      <div class="hidden md:block w-1/3 min-h-full">
+
+      <!-- Right Column (Desktop): Fixed Image -->
+      <div class="hidden md:block w-1/3 flex-none relative overflow-hidden border-l border-slate-100">
+        <!-- Subtle fade on the left side of the image -->
+        <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent z-10"></div>
         <img src="${imageSrc}" class="w-full h-full object-cover" loading="lazy" decoding="async" />
       </div>
     </div>
@@ -178,6 +204,34 @@ window.openSessionModal = function(id) {
   document.body.classList.add('modal-open');
   modal.classList.add('active');
   lucide.createIcons();
+
+  // Scroll Indicator Logic
+  const scrollArea = document.getElementById('modal-scroll-area');
+  const arrow = document.getElementById('scroll-arrow');
+  const fade = document.getElementById('scroll-fade');
+
+  if (scrollArea) {
+    const updateArrowVisibility = () => {
+      const isScrollable = scrollArea.scrollHeight > scrollArea.clientHeight + 10;
+      const isAtBottom = scrollArea.scrollHeight - scrollArea.scrollTop <= scrollArea.clientHeight + 40;
+      
+      const showIndicators = isScrollable && !isAtBottom;
+
+      if (arrow) {
+        if (showIndicators) arrow.classList.remove('opacity-0');
+        else arrow.classList.add('opacity-0');
+      }
+      
+      if (fade) {
+        if (showIndicators) fade.classList.remove('opacity-0');
+        else fade.classList.add('opacity-0');
+      }
+    };
+
+    scrollArea.addEventListener('scroll', updateArrowVisibility);
+    // Execute after a small delay to ensure rendering is complete
+    setTimeout(updateArrowVisibility, 150);
+  }
 };
 
 window.closeSessionModal = function() {

@@ -114,9 +114,8 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
         <!-- Session 0 -->
-        <div class="session-card p-10" id="session-0" onclick="openSessionModal('session-0')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-0" onclick="openSessionModal('session-0')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="settings" class="w-10 h-10 md:w-12 md:h-12 text-primary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_0_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Hoe het werkt</h3>
               <div class="flex items-center gap-3">
@@ -125,16 +124,19 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_0_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Heb je je ooit al afgevraagd welke magie er verscholen zit onder grote taalmodellen zoals ChatGPT, Claude of Gemini?</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-under-the-hood.jpg" data-detail-image="assets/small-under-the-hood.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_0_intro" class="intro-text hidden">Heb je je ooit al afgevraagd welke magie er verscholen zit onder grote taalmodellen zoals ChatGPT, Claude of Gemini?</div>
           <div data-i18n="session_0_detail" class="detail-text hidden">We doorlopen samen de basisconcepten van AI modellen en geven antwoorden op vragen als: Waarom begrijpt zo'n model me soms wel en soms ook weer helemaal niet? Waarom komt er steeds een ander antwoord uit? In hoeverre denkt zo'n model zoals een mens? <br/><br/>De wonden die je lessen wiskunde en biologie hebben achtergelaten op je ziel? Sorry daar gaan we toch nog eens aan krabben. Maar geen zorgen: we houden het licht en luchtig en zorgen dat iedereen mee kan volgen.</div>
-          <img src="assets/under-the-hood.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
 
         <!-- Session 1 -->
-        <div class="session-card p-10" id="session-1" onclick="openSessionModal('session-1')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-1" onclick="openSessionModal('session-1')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="lightbulb" class="w-10 h-10 md:w-12 md:h-12 text-secondary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_1_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Inspiratie</h3>
               <div class="flex flex-wrap items-center gap-2">
@@ -144,16 +146,19 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_1_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">In deze sessie nemen we je mee door de weg die AI heeft afgelegd, vanwaar we komen en waar we vandaag staan.</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-inspiration.jpg" data-detail-image="assets/small-inspiration.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_1_intro" class="intro-text hidden">In deze sessie nemen we je mee door de weg die AI heeft afgelegd, vanwaar we komen en waar we vandaag staan.</div>
           <div data-i18n="session_1_detail" class="detail-text hidden">We tonen wat toepassingen van wat AI vandaag kan, maar proberen ook al een blik op de toekomst te werpen. Niemand kan de toekomst exact voorspellen uiteraard, maar je krijgt de ingrediënten om zelf je mening te vormen.</div>
-          <img src="assets/inspiration.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
 
         <!-- Session 2 -->
-        <div class="session-card p-10" id="session-2" onclick="openSessionModal('session-2')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-2" onclick="openSessionModal('session-2')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="palette" class="w-10 h-10 md:w-12 md:h-12 text-primary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_2_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Creatief met AI</h3>
               <div class="flex flex-wrap items-center gap-2">
@@ -163,16 +168,19 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_2_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Van beeldgeneratie tot muziek. We overlopen prompting tips en laten zien hoe je van jezelf zo'n perfect studio portret kan maken.</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-creative.jpg" data-detail-image="assets/small-creative.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_2_intro" class="intro-text hidden">Van beeldgeneratie tot muziek. We overlopen prompting tips en laten zien hoe je van jezelf zo'n perfect studio portret kan maken.</div>
           <div data-i18n="session_2_detail" class="detail-text hidden">Ook video's en muziek liggen binnen handbereik. Beter goed gepikt dan slecht gemaakt: we laten zien hoe je een bepaalde stijl kan overnemen op je eigen creaties.</div>
-          <img src="assets/creative.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
 
         <!-- Session 3 -->
-        <div class="session-card p-10" id="session-3" onclick="openSessionModal('session-3')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-3" onclick="openSessionModal('session-3')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="wrench" class="w-10 h-10 md:w-12 md:h-12 text-primary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_3_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Knutselen met AI</h3>
               <div class="flex items-center gap-3">
@@ -181,16 +189,19 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_3_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">De meeste mensen gebruiken slechts een fractie van waar AI toe in staat is.</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-tinkering.jpg" data-detail-image="assets/small-tinkering.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_3_intro" class="intro-text hidden">De meeste mensen gebruiken slechts een fractie van waar AI toe in staat is.</div>
           <div data-i18n="session_3_detail" class="detail-text hidden">Zelf door uitsluitend gebruik te maken van gratis tools kom je al een heel eind en maak je met gemak je eigen applicaties. We geven inspiratie met praktische voorbeelden en tonen stap voor stap hoe je daar aan begint zonder enige voorkennis.</div>
-          <img src="assets/tinkering.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
 
         <!-- Session 4 -->
-        <div class="session-card p-10" id="session-4" onclick="openSessionModal('session-4')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-4" onclick="openSessionModal('session-4')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="terminal" class="w-10 h-10 md:w-12 md:h-12 text-primary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_4_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Prompting basics</h3>
               <div class="flex items-center gap-3">
@@ -199,16 +210,19 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_4_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">Prompting: hoe je opdrachten geeft aan AI modellen.</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-prompting.jpg" data-detail-image="assets/small-prompting.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_4_intro" class="intro-text hidden">Prompting: hoe je opdrachten geeft aan AI modellen.</div>
           <div data-i18n="session_4_detail" class="detail-text hidden">Net zoals we met z'n allen hebben leren lezen, fietsen en googelen; is ook dit een kunde die heel simpel wordt eens je het kan. Eens je de truukjes leert zal je merken dat je resultaten beter worden en dat zo'n taalmodel je plots beter begint te verstaan.</div>
-          <img src="assets/prompting.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
 
         <!-- Session 5 -->
-        <div class="session-card p-10" id="session-5" onclick="openSessionModal('session-5')">
+        <div class="session-card p-10 flex flex-col h-full group" id="session-5" onclick="openSessionModal('session-5')">
           <div class="card-header flex items-start gap-4 md:gap-6 mb-6">
-            <i data-lucide="graduation-cap" class="w-10 h-10 md:w-12 md:h-12 text-primary mt-1"></i>
             <div class="flex flex-col gap-2">
               <h3 data-i18n="session_5_title" class="text-2xl font-weight tracking-tight text-slate-900 leading-tight">Studeren met AI</h3>
               <div class="flex items-center gap-3">
@@ -217,10 +231,14 @@
               </div>
             </div>
           </div>
-          <p data-i18n="session_5_intro" class="text-slate-600 text-sm leading-relaxed mb-8 flex-1">AI is de perfecte partner in crime om te studeren of informatie te verwerken.</p>
+          <div class="relative w-full h-48 mb-8 overflow-hidden rounded-2xl flex-shrink-0 bg-white">
+            <img src="assets/icon-small-learning.jpg" data-detail-image="assets/small-learning.jpg" class="card-image w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white" loading="lazy" />
+          </div>
+          <div data-i18n="session_5_intro" class="intro-text hidden">AI is de perfecte partner in crime om te studeren of informatie te verwerken.</div>
           <div data-i18n="session_5_detail" class="detail-text hidden">We tonen stap voor stap hoe je uitsluitend met gratis tools aan de slag kunt gaan en welke ongelofelijke resultaten er mee te halen zijn voor school, werk of hobby.</div>
-          <img src="assets/learning.jpeg" class="card-image hidden" loading="lazy" />
-          <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <div class="mt-auto">
+            <button class="text-primary font-bold flex items-center gap-2 text-sm"><span data-i18n="btn_more_info">Meer info</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
       </div>
     </div>
@@ -346,7 +364,7 @@
       <button onclick="closeSessionModal()" class="absolute -top-3 -right-3 md:-top-5 md:-right-5 z-[110] w-12 h-12 md:w-14 md:h-14 rounded-full bg-white flex items-center justify-center text-primary shadow-2xl hover:scale-110 transition-transform">
         <i data-lucide="x" class="w-6 h-6 md:w-8 md:h-8"></i>
       </button>
-      <div id="modal-content" class="relative bg-white rounded-[2.5rem] w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div id="modal-content" class="relative bg-white rounded-[2.5rem] w-full max-h-[90vh] overflow-hidden shadow-2xl">
         <div id="modal-content-inner" class="h-full"></div>
       </div>
     </div>

@@ -92,6 +92,7 @@ body {
 #session-modal.active #modal-content {
   opacity: 1;
   transform: scale(1);
+  height: 90vh; /* Set a fixed height to ensure internal scrolling works correctly */
 }
 
 body.modal-open { overflow: hidden; }
