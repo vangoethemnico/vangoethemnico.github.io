@@ -70,7 +70,7 @@ const TRANSLATIONS = {
     label_core: "Core Session",
     label_supplement: "Supplement",
     btn_more_info: "More info",
-    session_0_title: "Under the hood",
+    session_0_title: "How it works, the basics",
     session_0_intro: "Have you ever wondered what magic is hidden under large language models like ChatGPT, Claude or Gemini? Just like you don't have to be a mechanic to drive a car, it helps to know how a clutch works. It's the same with AI: if you understand the basic concepts, you'll find you can do much more with it. In this session, we take a peek under the hood of AI models and explain how they work, but in plain language and without the hype.",
     session_0_detail: "Together we walk through the basic concepts of AI models and provide answers to questions like: Why do these models sometimes understand me and sometimes not at all? Why does it spit out a different answer every time I use it? Do AI models think like humans do? <br/><br/>The scars that your math and biology lessons left on your soul? Sorry, we're going to scratch those again. But don't worry: we keep it light and airy and ensure everyone can follow along. A game of 'Guess Who?' and a handful of minions help us puncture the magic and give you the basics to get started as a true AI whisperer.",
     session_1_title: "Inspiration",
@@ -161,9 +161,13 @@ window.openSessionModal = function(id) {
 
   modalBody.innerHTML = `
     <div class="flex flex-col md:flex-row h-full items-stretch">
-      <div class="flex-1 p-8 md:p-14 overflow-y-auto custom-scrollbar">
-        <div class="mb-8">${header}</div>
-        <div class="text-slate-600 text-lg leading-relaxed">${detail}</div>
+      <div class="flex-1 p-8 md:p-14 flex flex-col">
+        <div class="flex-none mb-8">
+          ${header}
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar text-slate-600 text-lg leading-relaxed">
+          ${detail}
+        </div>
       </div>
       <div class="hidden md:block w-1/3 min-h-full">
         <img src="${imageSrc}" class="w-full h-full object-cover" loading="lazy" decoding="async" />
