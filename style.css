@@ -102,6 +102,13 @@ body.modal-open { overflow: hidden; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 82, 161, 0.2); border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 82, 161, 0.4); }
 .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(99, 82, 161, 0.2) transparent; }
-
 .transition-content { transition: opacity 0.3s ease, transform 0.3s ease; }
-.founder-layer { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+
+/* Progressive Image Loading */
+.progressive-img {
+  filter: blur(6px);
+  transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.progressive-img.hd-loaded {
+  filter: blur(0);
+}

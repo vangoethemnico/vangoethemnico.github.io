@@ -257,66 +257,24 @@
        
         <div class="grid grid-cols-8 md:grid-cols-8 gap-8 md:gap-12" id="founders-container">
           <!-- Nico -->
-          <div class="col-start-1 col-span-4 md:col-start-2 md:col-span-3 space-y-4">
-            <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative cursor-pointer border border-slate-100" onclick="toggleFounder('nico')">
-              <div id="founder-front-nico" class="founder-layer absolute inset-0 w-full h-full z-20 opacity-100 translate-x-0">
-                <img src="assets/nico-donker.png" alt="Nico Van Goethem" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
+          <div class="col-span-3 col-start-2 space-y-4 cursor-pointer" onclick="openFounderModal('nico')">
+            <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative border border-slate-100">
+              <img src="assets/small-nico-donker.png" data-detail-image="assets/nico-donker.png" alt="Nico Van Goethem" class="progressive-img w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
                 <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end">
                   <span data-i18n="founder_click_bio" class="text-white/70 text-[10px] font-weight uppercase tracking-widest mb-1">Klik voor bio</span>
                 </div>
-              </div>
-              <div id="founder-back-nico" class="founder-layer absolute inset-0 w-full h-full p-8 flex flex-col bg-slate-50 opacity-0 pointer-events-none translate-x-full z-10">
-                <div class="flex-none">
-                  <button class="mb-6 text-primary hover:opacity-70"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                  <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="assets/nico-donker.png" class="w-full h-full object-cover" loading="lazy" /></div>
-                    <div>
-                      <h4 class="text-lg font-weight leading-tight">Nico Van Goethem</h4>
-                      <p data-i18n="founder_nico_role" class="text-primary font-bold text-[9px] uppercase">Spreker</p>
-                    </div>
-                  </div>
-                </div>
-                <div data-i18n="bio_nico" class="flex-1 overflow-y-auto text-slate-600 text-sm leading-relaxed pointer-events-auto custom-scrollbar">
-                  <p class="mb-4">Toen ik 12 was kreeg ik m'n eerste computer. Met m'n spaargeld fietste ik naar de boekenwinkel om een boek te kopen om te leren programmeren. Daarnaast had ik ook nog een andere hobby: elk toestel uit elkaar halen om te zien wat erin zat.</p>
-                  <p class="mb-4">Die passies zijn nooit overgegaan: ik ben industrieel ingenieur elektronica geworden en heb heel m'n loopbaan gespendeerd in functies waar techniek en 'uitvogelen hoe iets werkt' belangrijk waren. Van developer naar architect tot verantwoordelijk voor digitale strategie en innovatie bij SD Worx. AI is dus vanzelfsprekend een groot stuk van mijn focus.</p>
-                  <p class="mb-4">Alle invalshoeken gaande van de technologie en de wiskunde tot de impact op onze ecologie en maatschappij probeer ik te volgen. Aan de rotvaart waarin dit topic evolueert: een serieuze uitdaging.</p>
-                  <p class="mb-4">Mijn missie met deze sessies is om in simpele mensentaal en met veel voorbeelden, interactieve demo's en wat humor (ook dad-jokes, ik probeer te minderen maar het is moeilijk) uit te leggen hoe het werkt en wat je ermee kan doen.</p>
-                  <p class="mb-4">Ik geef context om zelf je mening te vormen en hopelijk ook geïnspireerd te raken om er iets mee te doen (wat dat 'iets' dan ook mag zijn). Geen verkoopspraatjes van het zoveelste magische product en geen saaie business klap.</p>
-                  <p class="mb-4">Weet ik alles ? Absoluut niet, en hoe meer ik me er in verdiep hoe meer er op de te-ontdekken-stapel belandt. Verwacht dus geen zelfverklaarde guru, maar gewoon een mens die probeert te volgen en zijn enthousiasme graag wil delen over dit boeiende topic.</p>
-                  <p>AI in simpele mensentaal, zonder het gedoe dus...</p>
-                </div>
-              </div>
             </div>
-            <div><h4 class="text-xl font-bold">Nico Van Goethem</h4><p data-i18n="founder_nico_role" class="text-sm text-primary font-bold uppercase">Spreker</p></div>
+            <div><h4 data-i18n="founder_nico_name" class="text-xl font-bold">Nico Van Goethem</h4><p data-i18n="founder_nico_role" class="text-sm text-primary font-bold uppercase">Spreker</p></div>
           </div>
           <!-- Sofie -->
-          <div class="col-span-4 space-y-4 md:col-span-3">
-            <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative cursor-pointer border border-slate-100" onclick="toggleFounder('sofie')">
-              <div id="founder-front-sofie" class="founder-layer absolute inset-0 w-full h-full z-20 opacity-100 translate-x-0">
-                <img src="assets/sofie-donker2.png" alt="Sofie Embrechts Podevyn" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
+          <div class="col-span-3 col-start-5 space-y-4 cursor-pointer" onclick="openFounderModal('sofie')">
+            <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-white shadow-xl group relative border border-slate-100">
+              <img src="assets/small-sofie-donker2.png" data-detail-image="assets/sofie-donker2.png" alt="Sofie Embrechts Podevyn" class="progressive-img w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" loading="lazy" decoding="async" />
                 <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end">
                   <span data-i18n="founder_click_bio" class="text-white/70 text-[10px] font-weight uppercase tracking-widest mb-1">Klik voor bio</span>
                 </div>
-              </div>
-              <div id="founder-back-sofie" class="founder-layer absolute inset-0 w-full h-full p-8 flex flex-col bg-slate-50 opacity-0 pointer-events-none translate-x-full z-10">
-                <div class="flex-none">
-                  <button class="mb-6 text-primary hover:opacity-70"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                  <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="assets/sofie-donker2.png" class="w-full h-full object-cover" loading="lazy" /></div>
-                    <div>
-                      <h4 class="text-lg font-weight leading-tight">Sofie Embrechts Podevyn</h4>
-                      <p data-i18n="founder_sofie_role" class="text-primary font-bold text-[9px] uppercase">Boekingen</p>
-                    </div>
-                  </div>
-                </div>
-                <div data-i18n="bio_sofie" class="flex-1 overflow-y-auto text-slate-600 text-sm leading-relaxed pointer-events-auto custom-scrollbar">
-                  <p class="mb-4">De passie en interesse voor wetenschap kwam bij mij in het middelbaar. Chemie bleek mijn natuurlijke habitat en ik koos daarom ook voor de studie industrieel ingenieur met een specialisatie in chemie. Zo kwam ik terecht bij Procter & Gamble waar ik met veel passie werk als onderzoeker in het analytisch labo. Ik gebruik AI op dagelijkse basis in mijn werkomgeving. Het maakt mijn werk als onderzoeker zoveel krachtiger.</p>
-                  <p class="mb-4">Naast mijn passie voor wetenschap en techniek ben ik ook met veel liefde en plezier mama van onze twee zonen. AI is ook daar mijn beste vriend: van het ondersteunen van onze kinderen in hun schoolwerk, tot de optimalisatie van het energiegebruik van onze huishoudapparaten.</p>
-                  <p>Wil je graag een sessie inboeken of heb je praktische vragen? <br/>Dan kan je bij mij terecht!</p>
-                </div>
-              </div>
             </div>
-            <div><h4 class="text-xl font-bold">Sofie Embrechts Podevyn</h4><p data-i18n="founder_sofie_role" class="text-sm text-primary font-bold uppercase">Boekingen</p></div>
+            <div><h4 data-i18n="founder_sofie_name" class="text-xl font-bold">Sofie Embrechts Podevyn</h4><p data-i18n="founder_sofie_role" class="text-sm text-primary font-bold uppercase">Boekingen</p></div>
           </div>
         </div>
       </div>

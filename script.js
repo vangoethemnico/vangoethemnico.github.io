@@ -43,7 +43,9 @@ const TRANSLATIONS = {
     about_desc: "Nico Van Goethem en Sofie Embrechts Podevyn bundelen hun expertise in innovatie en communicatie om AI toegankelijk te maken voor iedereen. Wij geloven dat technologie het sterkst is als ze de menselijke factor versterkt, niet vervangt.",
     founder_click_bio: "Klik voor bio",
     founder_nico_role: "Spreker",
+    founder_nico_name: "Nico Van Goethem",
     founder_sofie_role: "Boekingen",
+    founder_sofie_name: "Sofie Embrechts Podevyn",
     bio_nico: '<p class="mb-4">Toen ik 12 was kreeg ik m\'n eerste computer. Met m\'n spaargeld fietste ik naar de boekenwinkel om een boek te kopen om te leren programmeren. Daarnaast had ik ook nog een andere hobby: elk toestel uit elkaar halen om te zien wat erin zat.</p><p class="mb-4">Die passies zijn nooit overgegaan: ik ben industrieel ingenieur elektronica geworden en heb heel m\'n loopbaan gespendeerd in functies waar techniek en \'uitvogelen hoe iets werkt\' belangrijk waren. Van developer naar architect tot verantwoordelijk voor digitale strategie en innovatie bij SD Worx. AI is dus vanzelfsprekend een groot stuk van mijn focus.</p><p class="mb-4">Alle invalshoeken gaande van de technologie en de wiskunde tot de impact op onze ecologie en maatschappij probeer ik te volgen. Aan de rotvaart waarin dit topic evolueert: een serieuze uitdaging.</p><p class="mb-4">Mijn missie met deze sessies is om in simpele mensentaal en met veel voorbeelden, interactieve demo\'s en wat humor (ook dad-jokes, ik probeer te minderen maar het is moeilijk) uit te leggen hoe het werkt en wat je ermee kan doen.</p><p class="mb-4">Ik geef context om zelf je mening te vormen en hopelijk ook geïnspireerd te raken om er iets mee te doen (wat dat \'iets\' dan ook mag zijn). Geen verkoopspraatjes van het zoveelste magische product en geen saaie business klap.</p><p class="mb-4">Weet ik alles ? Absoluut niet, en hoe meer ik me er in verdiep hoe meer er op de te-ontdekken-stapel belandt. Verwacht dus geen zelfverklaarde guru, maar gewoon iemand die probeert te volgen en zijn enthousiasme graag wil delen over dit boeiende topic.</p><p>AI in simpele mensentaal, zonder het gedoe dus...</p>',
     bio_sofie: '<p class="mb-4">De passie en interesse voor wetenschap kwam bij mij in het middelbaar. Chemie bleek mijn natuurlijke habitat en ik koos daarom ook voor de studie industrieel ingenieur met een specialisatie in chemie. Zo kwam ik terecht bij Procter & Gamble waar ik met veel passie werk als onderzoeker in het analytisch labo. Ik gebruik AI op dagelijkse basis in mijn werkomgeving. Het maakt mijn werk als onderzoeker zoveel krachtiger.</p><p class="mb-4">Naast mijn passie voor wetenschap en techniek ben ik ook met veel liefde en plezier mama van onze twee zonen. AI is ook daar mijn beste vriend: van het ondersteunen van onze kinderen in hun schoolwerk, tot de optimalisatie van het energiegebruik van onze huishoudapparaten.</p><p>Wil je graag een sessie inboeken of heb je praktische vragen? <br/>Dan kan je bij mij terecht!</p>',
     cta_title: "Klaar om te beginnen?",
@@ -94,7 +96,9 @@ const TRANSLATIONS = {
     session_5_detail: "We show step by step how you can get started using exclusively free tools and what incredible results can be achieved for school, work, or hobbies. Questioning, setting up quizzes, interactive demos, summaries, presentations, podcasts, infographics,... AI can do it all and much more. We show you how to handle it, which tools are available and how to use and share the results. Studying will from now on be much more fun, efficient and effective. And all that without the hype.",
     about_title: "About Us",
     founder_click_bio: "Click for bio",
+    founder_nico_name: "Nico Van Goethem",
     founder_nico_role: "Speaker",
+    founder_sofie_name: "Sofie Embrechts Podevyn",
     founder_sofie_role: "Bookings",
     bio_nico: '<p class="mb-4">When I was 12, I got my first computer. With my savings, I drove my bike to the bookstore to buy a book on programming. Besides that, I had another hobby: taking every device apart to see what was inside.</p><p class="mb-4">Those passions never went away: I became an industrial engineer in electronics and spent my entire career in positions where technology and \'figuring out how something works\' were important. From developer to architect to being responsible for digital strategy and innovation at SD Worx. AI is therefore naturally a big part of my focus.</p><p class="mb-4">I try to follow all perspectives, from technology and mathematics to the impact on our ecology and society. At the high speed this topic evolves: a serious challenge.</p><p class="mb-4">My mission with these sessions is to explain in simple human language and with many examples, interactive demos, and some humor (also dad jokes, I\'m trying to cut back but it\'s hard) how it works and what you can do with it.</p><p class="mb-4">I provide context for you to form your own opinion and hopefully also get inspired to do something with it (whatever that \'something\' may be). No sales pitches for the umpteenth magic product and no boring business talk.</p><p class="mb-4">Do I know everything? Absolutely not, and the more I delve into it, the more ends up on the to-be-discovered pile. So don\'t expect a self-proclaimed guru, but just someone who is trying to keep track and wants to share his enthusiasm about this fascinating topic.</p><p>AI in plain language, without the hype...</p>',
     bio_sofie: '<p class="mb-4">The passion and interest in science came to me in secondary school. Chemistry turned out to be my natural habitat, and I therefore chose to study industrial engineering with a specialization in chemistry. That\'s how I ended up at Procter & Gamble, where I work with great passion as a researcher in the analytical lab. I use AI on a daily basis in my work environment. It makes my work as a researcher so much more powerful.</p><p class="mb-4">In addition to my passion for science and technology, I am also the mother of our two sons with much love and pleasure. AI is also my best friend there: from supporting our children in their schoolwork to optimizing the energy use of our household appliances.</p><p>Would you like to book a session or do you have practical questions? <br/>I\'m here to help!</p>',
@@ -170,7 +174,7 @@ window.openSessionModal = function(id) {
       <div class="flex-1 relative flex flex-col min-w-0 min-h-0">
         <!-- Mobile Background Visual: Blurred image behind text (only for mobile) -->
         <div class="md:hidden absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-          <img src="${imageSrc}" class="w-full h-full object-cover scale-150 blur-3xl opacity-30" />
+          <img src="${imageSrc}" class="modal-load-target w-full h-full object-cover scale-150 blur-3xl opacity-30" />
           <div class="absolute inset-0 bg-white/80"></div>
         </div>
 
@@ -200,7 +204,7 @@ window.openSessionModal = function(id) {
       <div class="hidden md:block w-1/3 flex-none relative overflow-hidden border-l border-slate-100">
         <!-- Subtle fade on the left side of the image -->
         <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent z-10"></div>
-        <img src="${imageSrc}" class="w-full h-full object-cover" loading="lazy" decoding="async" />
+        <img src="${imageSrc}" class="modal-load-target w-full h-full object-cover progressive-img" loading="lazy" decoding="async" />
       </div>
     </div>
   `;
@@ -208,6 +212,131 @@ window.openSessionModal = function(id) {
   document.body.classList.add('modal-open');
   modal.classList.add('active');
   lucide.createIcons();
+
+  // Modal Progressive Loading: Load HD version in background and swap
+  const hdSrc = imageSrc.replace('small-', '');
+  const temp = new Image();
+  temp.src = hdSrc;
+  temp.onload = () => {
+    modal.querySelectorAll('.modal-load-target').forEach(img => {
+      img.src = hdSrc;
+      img.classList.add('hd-loaded');
+    });
+  };
+
+  // Scroll Indicator Logic
+  const scrollArea = document.getElementById('modal-scroll-area');
+  const arrow = document.getElementById('scroll-arrow');
+  const fade = document.getElementById('scroll-fade');
+
+  if (scrollArea) {
+    const updateArrowVisibility = () => {
+      const isScrollable = scrollArea.scrollHeight > scrollArea.clientHeight + 10;
+      const isAtBottom = scrollArea.scrollHeight - scrollArea.scrollTop <= scrollArea.clientHeight + 40;
+      
+      const showIndicators = isScrollable && !isAtBottom;
+
+      if (arrow) {
+        if (showIndicators) arrow.classList.remove('opacity-0');
+        else arrow.classList.add('opacity-0');
+      }
+      
+      if (fade) {
+        if (showIndicators) fade.classList.remove('opacity-0');
+        else fade.classList.add('opacity-0');
+      }
+    };
+
+    scrollArea.addEventListener('scroll', updateArrowVisibility);
+    // Execute after a small delay to ensure rendering is complete
+    setTimeout(updateArrowVisibility, 150);
+  }
+};
+
+// Founder Modal Logic
+window.openFounderModal = function(id) {
+  const modal = document.getElementById('session-modal'); // Reuse the same modal structure
+  const modalBody = document.getElementById('modal-content-inner');
+
+  let founderName, founderRole, founderBio, imageSrc, hdImageSrc;
+
+  // Get founder data based on ID and current language
+  if (id === 'nico') {
+    founderName = TRANSLATIONS[currentLang].founder_nico_name;
+    founderRole = TRANSLATIONS[currentLang].founder_nico_role;
+    founderBio = TRANSLATIONS[currentLang].bio_nico;
+    imageSrc = 'assets/small-nico-donker.png'; // Use small image for initial load
+    hdImageSrc = 'assets/nico-donker.png'; // HD image for progressive load
+  } else if (id === 'sofie') {
+    founderName = TRANSLATIONS[currentLang].founder_sofie_name;
+    founderRole = TRANSLATIONS[currentLang].founder_sofie_role;
+    founderBio = TRANSLATIONS[currentLang].bio_sofie;
+    imageSrc = 'assets/small-sofie-donker2.png'; // Use small image for initial load
+    hdImageSrc = 'assets/sofie-donker2.png'; // HD image for progressive load
+  } else {
+    console.error('Unknown founder ID:', id);
+    return;
+  }
+
+  modalBody.innerHTML = `
+    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-[2.5rem] min-h-0">
+      <!-- Left Column: Text Block (Scrollable) -->
+      <div class="flex-1 relative flex flex-col min-w-0 min-h-0">
+        <!-- Mobile Background Visual: Blurred image behind text (only for mobile) -->
+        <div class="md:hidden absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+          <img src="${imageSrc}" class="modal-load-target w-full h-full object-cover scale-150 blur-3xl opacity-30" />
+          <div class="absolute inset-0 bg-white/80"></div>
+        </div>
+
+        <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
+          <div class="flex flex-col min-h-full">
+            <!-- Sticky Header -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="${imageSrc}" class="modal-load-target w-full h-full object-cover" loading="lazy" /></div>
+                <div>
+                  <h4 class="text-lg font-weight leading-tight">${founderName}</h4>
+                  <p class="text-primary font-bold text-[9px] uppercase">${founderRole}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Content Block -->
+            <div class="px-8 md:px-14 pt-8 pb-24 text-slate-600 text-lg leading-relaxed relative z-10">
+              <div>${founderBio}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Indicators -->
+        <div id="scroll-fade" class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-30 transition-opacity duration-300 opacity-0"></div>
+        <div id="scroll-arrow" class="absolute bottom-10 left-1/2 -translate-x-1/2 text-primary animate-bounce pointer-events-none opacity-0 transition-opacity duration-300 z-40">
+          <i data-lucide="chevron-down" class="w-10 h-10"></i>
+        </div>
+      </div>
+
+      <!-- Right Column (Desktop): Fixed Image -->
+      <div class="hidden md:block w-1/3 flex-none relative overflow-hidden border-l border-slate-100">
+        <!-- Subtle fade on the left side of the image -->
+        <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent z-10"></div>
+        <img src="${imageSrc}" class="modal-load-target w-full h-full object-cover progressive-img" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  `;
+
+  document.body.classList.add('modal-open');
+  modal.classList.add('active');
+  lucide.createIcons();
+
+  // Modal Progressive Loading: Load HD version in background and swap
+  const temp = new Image();
+  temp.src = hdImageSrc;
+  temp.onload = () => {
+    modal.querySelectorAll('.modal-load-target').forEach(img => {
+      img.src = hdImageSrc;
+      img.classList.add('hd-loaded');
+    });
+  };
 
   // Scroll Indicator Logic
   const scrollArea = document.getElementById('modal-scroll-area');
@@ -242,50 +371,6 @@ window.closeSessionModal = function() {
   const modal = document.getElementById('session-modal');
   modal.classList.remove('active');
   document.body.classList.remove('modal-open');
-};
-
-// Function to update mobile navigation links based on the currently active desktop link
-function updateMobileMenuLinksOnOpen() {
-  const mobileMenu = document.getElementById('mobile-menu');
-  const isMobileMenuOpen = mobileMenu && !mobileMenu.classList.contains('translate-x-full');
-
-  if (isMobileMenuOpen) {
-    let activeHref = null;
-    navLinks.forEach(link => {
-      if (link.classList.contains('text-primary')) { // Assuming text-primary means active
-        activeHref = link.getAttribute('href');
-      }
-    });
-
-    mobileNavLinks.forEach(link => {
-      const isActive = link.getAttribute('href') === activeHref;
-      link.classList.toggle('text-slate-400', isActive);
-      link.classList.toggle('pointer-events-none', isActive);
-      link.classList.toggle('text-slate-900', !isActive);
-      link.classList.toggle('pointer-events-auto', !isActive);
-    });
-  }
-}
-
-// Founder Logic
-window.toggleFounder = function(id) {
-  const front = document.getElementById(`founder-front-${id}`);
-  const back = document.getElementById(`founder-back-${id}`);
-  const isShowingFront = !front.classList.contains('opacity-0');
-
-  if (isShowingFront) {
-    // Show Bio (Back)
-    front.classList.remove('opacity-100', 'translate-x-0', 'z-20');
-    front.classList.add('opacity-0', '-translate-x-full', 'z-10');
-    back.classList.remove('opacity-0', 'translate-x-full', 'pointer-events-none', 'z-10');
-    back.classList.add('opacity-100', 'translate-x-0', 'z-20');
-  } else {
-    // Show Photo (Front)
-    back.classList.remove('opacity-100', 'translate-x-0', 'z-20');
-    back.classList.add('opacity-0', 'translate-x-full', 'pointer-events-none', 'z-10');
-    front.classList.remove('opacity-0', '-translate-x-full', 'z-10');
-    front.classList.add('opacity-100', 'translate-x-0', 'z-20');
-  }
 };
 
 // Mobile Menu Logic
@@ -630,3 +715,28 @@ function initHeroNetwork() {
 // Initial Render
 updateLanguage();
 initHeroNetwork();
+
+// Progressive Image Loading System for main page
+const progressiveObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      const currentSrc = img.getAttribute('src');
+      if (currentSrc && currentSrc.includes('small-')) {
+        const hdSrc = currentSrc.replace('small-', '');
+        const temp = new Image();
+        temp.src = hdSrc;
+        temp.onload = () => {
+          img.src = hdSrc;
+          img.classList.add('hd-loaded');
+        };
+      }
+      progressiveObserver.unobserve(img);
+    }
+  });
+}, { rootMargin: '50px' });
+
+document.querySelectorAll('img[src*="small-"]').forEach(img => {
+  img.classList.add('progressive-img');
+  progressiveObserver.observe(img);
+});
