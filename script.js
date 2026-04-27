@@ -55,7 +55,11 @@ const TRANSLATIONS = {
     email_subject_message: "Vraag over AI zonder gedoe",
     footer_copyright: "© AI zonder gedoe. Nico Van Goethem & Sofie Embrechts Podevyn.",
     footer_privacy: "Privacy Policy",
-    footer_terms: "Algemene Voorwaarden"
+    footer_terms: "Algemene Voorwaarden",
+    tally_src_booking:"https://tally.so/embed/Merg6g?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+    tally_src_message:"https://tally.so/embed/9q6aBX?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+    tally_height_booking:"713px",
+    tally_height_message:"713px"
   },
   en: {
     lang_toggle: "EN",
@@ -111,7 +115,11 @@ const TRANSLATIONS = {
     email_subject_message: "Question about AI without the hype",
     footer_copyright: "© AI without the hype. Nico Van Goethem & Sofie Embrechts Podevyn.",
     footer_privacy: "Privacy Policy",
-    footer_terms: "Terms and Conditions"
+    footer_terms: "Terms and Conditions",
+    tally_src_booking:"https://tally.so/embed/b52D4o?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+    tally_src_message:"https://tally.so/embed/RGZgvp?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+    tally_height_booking:"713px",
+    tally_height_message:"713px"
   }
 };
 
@@ -157,13 +165,51 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Contact Logic
 window.handleContact = function(type) {
-  const user = 'info';
-  const domain = 'aizondergedoe.be';
-  const email = user + '@' + domain;
-  const subjectKey = type === 'booking' ? 'email_subject_booking' : 'email_subject_message';
-  const subject = TRANSLATIONS[currentLang][subjectKey];
+  let tallySrc, title, minHeight;
+  if (type === 'message') {
+    tallySrc = TRANSLATIONS[currentLang].tally_src_message;
+    title = TRANSLATIONS[currentLang].cta_btn_message;
+    minHeight = TRANSLATIONS[currentLang].tally_height_message;
+  } else if (type === 'booking') {
+    tallySrc = TRANSLATIONS[currentLang].tally_src_booking;
+    title = TRANSLATIONS[currentLang].btn_book;
+    minHeight = TRANSLATIONS[currentLang].tally_height_booking;
+  } else {
+    console.error('Unknown contact type:', type);
+    return;
+  }
+  openTallyModal(tallySrc, title, minHeight);
+};
+
+window.openTallyModal = function(tallySrc, title, minHeight = '713px') {
+  const modal = document.getElementById('session-modal');
+  const modalBody = document.getElementById('modal-content-inner');
   
-  window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+  modalBody.innerHTML = `
+    <div class="flex flex-col h-full bg-white rounded-none md:rounded-[2.5rem] overflow-hidden">
+      <!-- Sticky Header -->
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-6 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+        <div class="flex-1 min-w-0">
+          <h3 class="text-2xl md:text-3xl font-weight tracking-tight text-slate-900">${title}</h3>
+        </div>
+        <button onclick="closeSessionModal()" class="md:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 shrink-0" aria-label="Close">
+          <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+      </div>
+      
+      <!-- Tally Embed -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <iframe data-tally-src="${tallySrc}"
+                loading="lazy" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0"
+                title="${title}" style="min-height: ${minHeight};"></iframe>
+      </div>
+    </div>
+  `;
+
+  document.body.classList.add('modal-open');
+  modal.classList.add('active');
+  lucide.createIcons();
+  if (window.Tally) Tally.loadEmbeds();
 };
 
 // Anti-scrape Footer Email
