@@ -51,7 +51,9 @@ const TRANSLATIONS = {
     cta_title: "Klaar om te beginnen?",
     cta_desc: "Kies voor een losse sessie of een op maat gemaakt traject voor jouw team of organisatie. Geen gedoe, gewoon simpele taal, voor iedereen.",
     cta_btn_message: "Stuur een bericht",
-    footer_copyright: "© 2026 AI zonder gedoe. Nico Van Goethem & Sofie Embrechts Podevyn.",
+    email_subject_booking: "Aanvraag voor een AI sessie",
+    email_subject_message: "Vraag over AI zonder gedoe",
+    footer_copyright: "© AI zonder gedoe. Nico Van Goethem & Sofie Embrechts Podevyn.",
     footer_privacy: "Privacy Policy",
     footer_terms: "Algemene Voorwaarden"
   },
@@ -105,7 +107,9 @@ const TRANSLATIONS = {
     cta_title: "Ready to start?",
     cta_desc: "Choose a single session or a tailor-made trajectory for your team or organization. No fuss, just plain language, for everyone.",
     cta_btn_message: "Send a message",
-    footer_copyright: "© 2026 AI without the hype. Nico Van Goethem & Sofie Embrechts Podevyn.",
+    email_subject_booking: "Inquiry for an AI session",
+    email_subject_message: "Question about AI without the hype",
+    footer_copyright: "© AI without the hype. Nico Van Goethem & Sofie Embrechts Podevyn.",
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms and Conditions"
   }
@@ -151,6 +155,31 @@ lucide.createIcons();
 // Set year
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// Contact Logic
+window.handleContact = function(type) {
+  const user = 'info';
+  const domain = 'aizondergedoe.be';
+  const email = user + '@' + domain;
+  const subjectKey = type === 'booking' ? 'email_subject_booking' : 'email_subject_message';
+  const subject = TRANSLATIONS[currentLang][subjectKey];
+  
+  window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+};
+
+// Anti-scrape Footer Email
+function initFooterEmail() {
+  const container = document.getElementById('footer-email-container');
+  if (!container) return;
+
+  const user = 'info';
+  const domain = 'aizondergedoe.be';
+  const email = user + '@' + domain;
+  
+  container.innerHTML = `
+    <a href="mailto:${email}" class="hover:text-primary transition-colors lowercase font-medium border-b border-transparent hover:border-primary/20 pb-0.5">${email}</a>
+  `;
+}
+
 // Intro Animation
 setTimeout(() => {
   document.getElementById('hero-content')?.classList.remove('opacity-0', 'translate-y-4');
@@ -169,7 +198,7 @@ window.openSessionModal = function(id) {
   const imageSrc = card.querySelector('.card-image').getAttribute('data-detail-image');
 
   modalBody.innerHTML = `
-    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-[2.5rem] min-h-0">
+    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-none md:rounded-[2.5rem] min-h-0">
       <!-- Left Column: Text Block (Scrollable) -->
       <div class="flex-1 relative flex flex-col min-w-0 min-h-0">
         <!-- Mobile Background Visual: Blurred image behind text (only for mobile) -->
@@ -181,8 +210,11 @@ window.openSessionModal = function(id) {
         <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
           <div class="flex flex-col min-h-full">
             <!-- Sticky Header -->
-            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50">
-              ${header}
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+              <div class="flex-1 min-w-0">${header}</div>
+              <button onclick="closeSessionModal()" class="md:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 shrink-0" aria-label="Close">
+                <i data-lucide="x" class="w-8 h-8"></i>
+              </button>
             </div>
             
             <!-- Content Block -->
@@ -279,7 +311,7 @@ window.openFounderModal = function(id) {
   }
 
   modalBody.innerHTML = `
-    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-[2.5rem] min-h-0">
+    <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-none md:rounded-[2.5rem] min-h-0">
       <!-- Left Column: Text Block (Scrollable) -->
       <div class="flex-1 relative flex flex-col min-w-0 min-h-0">
         <!-- Mobile Background Visual: Blurred image behind text (only for mobile) -->
@@ -291,14 +323,17 @@ window.openFounderModal = function(id) {
         <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
           <div class="flex flex-col min-h-full">
             <!-- Sticky Header -->
-            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50">
-              <div class="flex items-center gap-4 mb-4">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+              <div class="flex items-center gap-4 min-w-0">
                 <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="${imageSrc}" class="modal-load-target w-full h-full object-cover" loading="lazy" /></div>
-                <div>
-                  <h4 class="text-lg font-weight leading-tight">${founderName}</h4>
+                <div class="min-w-0">
+                  <h4 class="text-lg font-bold leading-tight truncate">${founderName}</h4>
                   <p class="text-primary font-bold text-[9px] uppercase">${founderRole}</p>
                 </div>
               </div>
+              <button onclick="closeSessionModal()" class="md:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 shrink-0" aria-label="Close">
+                <i data-lucide="x" class="w-8 h-8"></i>
+              </button>
             </div>
             
             <!-- Content Block -->
@@ -715,6 +750,7 @@ function initHeroNetwork() {
 // Initial Render
 updateLanguage();
 initHeroNetwork();
+initFooterEmail();
 
 // Progressive Image Loading System for main page
 const progressiveObserver = new IntersectionObserver((entries) => {

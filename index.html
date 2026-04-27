@@ -36,7 +36,7 @@
         <i data-lucide="languages" class="w-4 h-4"></i>
         <span class="lang-label">NL</span>
       </button>
-      <button data-i18n="btn_book" class="hidden sm:inline-block whitespace-nowrap bg-primary text-white px-8 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
+      <button data-i18n="btn_book" onclick="handleContact('booking')" class="hidden sm:inline-block whitespace-nowrap bg-primary text-white px-8 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
       Boek een sessie
     </button>
     </div>
@@ -64,7 +64,7 @@
           <i data-lucide="languages" class="w-6 h-6"></i>
           <span class="lang-label">NL</span>
         </button>
-        <button data-i18n="btn_book" class="mt-8 bg-primary text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-primary/20 whitespace-nowrap">Boek een sessie</button>
+        <button data-i18n="btn_book" onclick="handleContact('booking')" class="mt-8 bg-primary text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-primary/20 whitespace-nowrap">Boek een sessie</button>
       </nav>
     </div>
   </div>
@@ -291,10 +291,10 @@
         Kies voor een losse sessie of een op maat gemaakt traject voor jouw team. Geen gedoe, alleen pure waarde.
       </p>
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 relative z-10">
-        <button data-i18n="btn_book" class="bg-white text-primary px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-base md:text-lg hover:scale-105 active:scale-95 transition-all shadow-xl">
+        <button data-i18n="btn_book" onclick="handleContact('booking')" class="bg-white text-primary px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-base md:text-lg hover:scale-105 active:scale-95 transition-all shadow-xl">
           Boek een sessie
         </button>
-        <button data-i18n="cta_btn_message" class="border-2 border-white/30 text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-base md:text-lg hover:bg-white/10 transition-all">
+        <button data-i18n="cta_btn_message" onclick="handleContact('message')" class="border-2 border-white/30 text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-base md:text-lg hover:bg-white/10 transition-all">
           Stuur een bericht
         </button>
       </div>
@@ -307,6 +307,7 @@
       <div data-i18n="footer_copyright" class="text-center md:text-left">
         © <span id="year"></span> AI zonder gedoe. Nico Van Goethem & Sofie Embrechts Podevyn.
       </div>
+      <div id="footer-email-container" class="flex items-center gap-2"></div>
       <!-- <div class="flex flex-wrap justify-center gap-8">
         <a href="#" class="hover:text-primary transition-colors flex items-center gap-2">
           <i data-lucide="linkedin" class="w-4 h-4"></i>
@@ -319,15 +320,15 @@
   </footer>
 
   <!-- Modal Structure -->
-  <div id="session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-6 md:p-8">
+  <div id="session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-0 md:p-8">
     <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onclick="closeSessionModal()"></div>
     
-    <div class="relative w-full max-w-5xl">
+    <div class="relative w-full h-full md:h-auto md:max-w-5xl">
       <!-- Connected Close Button Blob -->
-      <button onclick="closeSessionModal()" class="absolute -top-3 -right-3 md:-top-5 md:-right-5 z-[110] w-12 h-12 md:w-14 md:h-14 rounded-full bg-white flex items-center justify-center text-primary shadow-2xl hover:scale-110 transition-transform">
+      <button onclick="closeSessionModal()" class="hidden md:flex absolute -top-3 -right-3 md:-top-5 md:-right-5 z-[110] w-12 h-12 md:w-14 md:h-14 rounded-full bg-white items-center justify-center text-primary shadow-2xl hover:scale-110 transition-transform">
         <i data-lucide="x" class="w-6 h-6 md:w-8 md:h-8"></i>
       </button>
-      <div id="modal-content" class="relative bg-white rounded-[2.5rem] w-full max-h-[90vh] overflow-hidden shadow-2xl">
+      <div id="modal-content" class="relative bg-white rounded-none md:rounded-[2.5rem] w-full h-full md:max-h-[90vh] overflow-hidden shadow-2xl">
         <div id="modal-content-inner" class="h-full"></div>
       </div>
     </div>
