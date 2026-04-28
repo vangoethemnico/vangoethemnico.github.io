@@ -59,7 +59,9 @@ const TRANSLATIONS = {
     tally_src_booking:"https://tally.so/embed/Merg6g?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
     tally_src_message:"https://tally.so/embed/9q6aBX?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
     tally_height_booking:"713px",
-    tally_height_message:"713px"
+    tally_height_message:"713px",
+    success_title: "Bedankt!",
+    success_message: "Bedankt voor je bericht, we nemen zo snel mogelijk contact met je op."
   },
   en: {
     lang_toggle: "EN",
@@ -119,7 +121,9 @@ const TRANSLATIONS = {
     tally_src_booking:"https://tally.so/embed/b52D4o?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
     tally_src_message:"https://tally.so/embed/RGZgvp?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
     tally_height_booking:"713px",
-    tally_height_message:"713px"
+    tally_height_message:"713px",
+    success_title: "Thank you!",
+    success_message: "Thank you for your message, we'll get back to you as soon as possible."
   }
 };
 
@@ -188,7 +192,7 @@ window.openTallyModal = function(tallySrc, title, minHeight = '713px') {
   modalBody.innerHTML = `
     <div class="flex flex-col h-full bg-white rounded-none md:rounded-[2.5rem] overflow-hidden">
       <!-- Sticky Header -->
-      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-6 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
         <div class="flex-1 min-w-0">
           <h3 class="text-2xl md:text-3xl font-weight tracking-tight text-slate-900">${title}</h3>
         </div>
@@ -198,7 +202,7 @@ window.openTallyModal = function(tallySrc, title, minHeight = '713px') {
       </div>
       
       <!-- Tally Embed -->
-      <div class="flex-1 overflow-y-auto custom-scrollbar">
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12">
         <iframe data-tally-src="${tallySrc}"
                 loading="lazy" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0"
                 title="${title}" style="min-height: ${minHeight};"></iframe>
@@ -211,6 +215,54 @@ window.openTallyModal = function(tallySrc, title, minHeight = '713px') {
   lucide.createIcons();
   if (window.Tally) Tally.loadEmbeds();
 };
+
+// Success Screen Logic (called after redirect)
+window.showSuccessScreen = function() {
+  const title = TRANSLATIONS[currentLang].success_title;
+  const message = TRANSLATIONS[currentLang].success_message;
+  const modal = document.getElementById('session-modal');
+  const modalBody = document.getElementById('modal-content-inner');
+  
+  modalBody.innerHTML = `
+    <div class="flex flex-col h-full bg-white rounded-none md:rounded-[2.5rem] overflow-hidden">
+      <!-- Sticky Header -->
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+        <div class="flex-1 min-w-0">
+          <h3 class="text-2xl md:text-3xl font-weight tracking-tight text-slate-900">${title}</h3>
+        </div>
+        <button onclick="closeSessionModal()" class="md:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 shrink-0" aria-label="Close">
+          <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+      </div>
+      
+      <!-- Content Block -->
+      <div class="flex-1 flex flex-col items-center justify-center p-8 md:p-14 text-center">
+        <div class="mb-8 p-6 bg-primary/10 rounded-full text-primary">
+          <i data-lucide="check-circle-2" class="w-16 h-16"></i>
+        </div>
+        <p class="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-lg mb-12">
+          ${message}
+        </p>
+        <button onclick="closeSessionModal()" class="btn-primary py-4 px-12 text-lg shadow-xl shadow-primary/20">
+          OK
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.classList.add('modal-open');
+  modal.classList.add('active');
+  lucide.createIcons();
+};
+
+function checkUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('submitted') === 'true') {
+    showSuccessScreen();
+    // Clean up URL without refreshing
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
 
 // Anti-scrape Footer Email
 function initFooterEmail() {
@@ -797,6 +849,7 @@ function initHeroNetwork() {
 updateLanguage();
 initHeroNetwork();
 initFooterEmail();
+checkUrlParams();
 
 // Progressive Image Loading System for main page
 const progressiveObserver = new IntersectionObserver((entries) => {
