@@ -201,7 +201,7 @@ window.openTallyModal = function(tallySrc, title, minHeight = '713px') {
   modalBody.innerHTML = `
     <div class="flex flex-col h-full bg-white rounded-none md:rounded-[2.5rem] overflow-hidden">
       <!-- Sticky Header -->
-      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-4 md:p-4 md:pl-8 pb-2 border-b border-slate-100/50 flex justify-between items-start gap-4">
         <div class="flex-1 min-w-0">
           <h3 class="text-2xl md:text-3xl font-weight tracking-tight text-slate-900">${title}</h3>
         </div>
@@ -235,7 +235,7 @@ window.showSuccessScreen = function() {
   modalBody.innerHTML = `
     <div class="flex flex-col h-full bg-white rounded-none md:rounded-[2.5rem] overflow-hidden">
       <!-- Sticky Header -->
-      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+      <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-6 md:p-10 pb-4 border-b border-slate-100/50 flex justify-between items-start gap-4">
         <div class="flex-1 min-w-0">
           <h3 class="text-2xl md:text-3xl font-weight tracking-tight text-slate-900">${title}</h3>
         </div>
@@ -319,7 +319,7 @@ window.openSessionModal = function(id) {
         <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
           <div class="flex flex-col min-h-full">
             <!-- Sticky Header -->
-            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-6 md:p-10 pb-4 border-b border-slate-100/50 flex justify-between items-start gap-4">
               <div class="flex-1 min-w-0">${header}</div>
               <button onclick="closeSessionModal()" class="md:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 shrink-0" aria-label="Close">
                 <i data-lucide="x" class="w-8 h-8"></i>
@@ -433,7 +433,7 @@ window.openFounderModal = function(id) {
         <div id="modal-scroll-area" class="flex-1 overflow-y-auto custom-scrollbar relative">
           <div class="flex flex-col min-h-full">
             <!-- Sticky Header -->
-            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-8 md:p-14 pb-6 border-b border-slate-100/50 flex justify-between items-start gap-4">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md z-30 p-6 md:p-10 pb-4 border-b border-slate-100/50 flex justify-between items-start gap-4">
               <div class="flex items-center gap-4 min-w-0">
                 <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md"><img src="${imageSrc}" class="modal-load-target w-full h-full object-cover" loading="lazy" /></div>
                 <div class="min-w-0">
