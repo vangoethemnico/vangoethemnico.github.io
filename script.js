@@ -1,3 +1,10 @@
+// Analytics Helper
+function trackEvent(name, params = {}) {
+  if (typeof gtag === 'function') {
+    gtag('event', name, params);
+  }
+}
+
 // Translations
 const TRANSLATIONS = {
   nl: {
@@ -133,6 +140,7 @@ window.toggleLanguage = function() {
   currentLang = currentLang === 'nl' ? 'en' : 'nl';
   localStorage.setItem('lang', currentLang);
   updateLanguage();
+  trackEvent('change_language', { language: currentLang });
 };
 
 function updateLanguage() {
@@ -182,6 +190,7 @@ window.handleContact = function(type) {
     console.error('Unknown contact type:', type);
     return;
   }
+  trackEvent('contact_initiation', { type: type });
   openTallyModal(tallySrc, title, minHeight);
 };
 
@@ -253,6 +262,7 @@ window.showSuccessScreen = function() {
   document.body.classList.add('modal-open');
   modal.classList.add('active');
   lucide.createIcons();
+  trackEvent('form_submission_success');
 };
 
 function checkUrlParams() {
@@ -295,6 +305,7 @@ window.openSessionModal = function(id) {
   const detail = card.querySelector('.detail-text').innerHTML;
   const imageSrc = card.querySelector('.card-image').getAttribute('data-detail-image');
 
+  trackEvent('view_session_detail', { session_id: id });
   modalBody.innerHTML = `
     <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-none md:rounded-[2.5rem] min-h-0">
       <!-- Left Column: Text Block (Scrollable) -->
@@ -408,6 +419,7 @@ window.openFounderModal = function(id) {
     return;
   }
 
+  trackEvent('view_founder_bio', { founder_id: id });
   modalBody.innerHTML = `
     <div class="flex flex-col md:flex-row h-full relative overflow-hidden bg-white rounded-none md:rounded-[2.5rem] min-h-0">
       <!-- Left Column: Text Block (Scrollable) -->
