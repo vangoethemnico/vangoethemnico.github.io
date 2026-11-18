@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Shape Recognizer</title>
+    <!-- Chart.js for Loss Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --accent: #2e7d32;
+            --accent-hover: #1b5e20;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--card-bg);
+            padding: 24px 60px; /* More padding for labels */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Progress Line */
+        nav::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            bottom: auto;
+            left: 70px; /* Align with center of first dot */
+            right: 70px;
+            height: 30px; /* Height of the container essentially, but we want a line */
+            height: 2px;
+            top: 50%;
+            margin-top: -1px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        /* Nav Dots */
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            color: #999;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            font-weight: bold;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .nav-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 42px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        button:hover:not(.active) {
+            background-color: #f0f0f0;
+        }
+
+        /* Layout */
+        .container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Controls Area */
+        .controls {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end; /* Align bottom to match inputs with buttons */
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9em;
+        }
+
+        /* Toggle Switch */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 40px;
+          height: 20px;
+          margin-right: 5px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 20px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 14px;
+          width: 14px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(20px);
+        }
+
+        input[type="text"], input[type="number"] {
+            background: #fff;
+            border: 1px solid #ccc;
+            color: var(--text-main);
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        /* Tab 1: Data Grid */
+        .data-grid-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .shape-section {
+            flex: 1;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .grid-item {
+            text-align: center;
+        }
+        
+        .grid-item canvas {
+            border: 1px solid #eee;
+        }
+        
+        .grid-item span {
+            display: block;
+            font-size: 0.7em;
+            color: #666;
+        }
+
+        /* Tab 2: Training */
+        .training-layout {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .viz-panel {
+            flex: 2;
+            background: var(--card-bg);
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stats-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            height: 50%; /* Explicitly set to half height */
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .weight-map-container {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            height: 50%; /* Explicitly set to half height */
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .weight-map-canvas {
+            width: 150px;
+            height: 150px;
+            image-rendering: pixelated;
+            border: 2px solid var(--accent);
+            margin-top: 5px;
+        }
+
+        /* Tab 3: Evaluation */
+        .eval-layout {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .draw-area {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        #drawCanvas {
+            background: white;
+            border: 2px solid #ccc;
+            cursor: crosshair;
+        }
+
+        /* New Evaluation Viz Styles */
+        .prediction-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .pred-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Donut Chart */
+        .donut-chart {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.3s;
+        }
+        
+        .donut-hole {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shape-icon {
+            width: 25px;
+            height: 25px;
+            background: #333;
+        }
+        
+        .shape-icon.triangle {
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+        
+        .shape-icon.square {
+            /* square has no specific styles needed beyond width/height */
+        }
+        
+        .shape-icon.circle {
+            border-radius: 50%;
+        }
+        
+        .pred-label {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        /* Network Graph Canvas */
+        #networkCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .overlay-tooltip {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+            font-size: 0.8rem;
+        }
+
+        #imagePreview {
+            position: fixed;
+            display: none;
+            border: 2px solid #333;
+            background: white;
+            z-index: 10000;
+            pointer-events: none; /* Let mouse pass through so it doesn't flicker */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            width: 150px;
+            height: 150px;
+            image-rendering: pixelated; /* Keep sharp */
+        }
+
+    </style>
+</head>
+<body>
+    <div id="imagePreview"></div>
+
+
+<nav>
+    <button class="nav-btn active" data-tab="data" data-label="Data Generation">1</button>
+    <button class="nav-btn" data-tab="training" data-label="Training">2</button>
+    <button class="nav-btn" data-tab="evaluation" data-label="Evaluation">3</button>
+</nav>
+
+<div class="container">
+    
+    <!-- TAB 1: DATA -->
+    <div id="data" class="tab-content active">
+        <div class="controls">
+            <div class="input-group">
+                <label>Samples per Shape</label>
+                <input type="number" id="numSamples" value="100" min="10" max="1000">
+            </div>
+             <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 2px;">
+                 <label class="switch">
+                    <input type="checkbox" id="togglePerfect" checked>
+                    <span class="slider"></span>
+                 </label>
+                 <span>Perfect</span>
+            </div>
+             <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 2px;">
+                 <label class="switch">
+                    <input type="checkbox" id="toggleHandDrawn">
+                    <span class="slider"></span>
+                 </label>
+                 <span>Hand Drawn</span>
+            </div>
+            <button id="btnGenerate">Generate Dataset</button>
+            <span id="datasetStatus" style="font-weight: bold; color: var(--accent); margin-left: 10px;">No training data available yet</span>
+            <div style="margin-left:auto; font-size: 0.9em; color:#666;">Input Size: 30x30px (900 nodes)</div>
+        </div>
+
+        <div class="data-grid-container" id="dataContainer">
+            <div class="shape-section">
+                <h3>Triangles</h3>
+                <div class="grid" id="gridTriangle"></div>
+            </div>
+            <div class="shape-section">
+                <h3>Squares</h3>
+                <div class="grid" id="gridSquare"></div>
+            </div>
+            <div class="shape-section">
+                <h3>Circles</h3>
+                <div class="grid" id="gridCircle"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: TRAINING -->
+    <div id="training" class="tab-content">
+        <div class="controls">
+            <div class="input-group">
+                <label>Hidden Layers (e.g., 20, 10)</label>
+                <input type="text" id="layerConfig" value="24, 12">
+            </div>
+            <div class="input-group">
+                <label>Learning Rate</label>
+                <input type="number" id="learningRate" value="0.1" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Max Epochs</label>
+                <input type="number" id="maxEpochs" value="200">
+            </div>
+            <div class="input-group" style="flex-direction: row; align-items: center; margin-bottom: 5px;">
+                <label class="switch">
+                  <input type="checkbox" id="cbLiveVisuals" checked>
+                  <span class="slider"></span>
+                </label>
+                <label for="cbLiveVisuals" style="margin:0; cursor: pointer;">Live Viz</label>
+            </div>
+            <button id="btnTrain">Start Training</button>
+            <button id="btnReset">Reset Network</button>
+            <button id="btnSave" style="background: #2196F3;">Save Model</button>
+            <button id="btnLoad" style="background: #FF9800;" onclick="document.getElementById('fileInput').click()">Load Model</button>
+            <input type="file" id="fileInput" style="display:none" accept=".json">
+            <div id="trainStatus" style="margin-left: 15px; font-weight: bold;">Status: Idle</div>
+        </div>
+        
+        <!-- Progress Bar and Timer -->
+        <div id="progressContainer" style="margin: 10px 0; padding: 0 10px; display: none; align-items: center; gap: 10px;">
+             <div style="flex-grow: 1;">
+                 <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #555; margin-bottom: 2px;">
+                     <span id="timeElapsed">Elapsed: 0.0s</span>
+                     <span id="timeLeft">Left: --</span>
+                 </div>
+                 <div style="width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden;">
+                     <div id="trainProgressBar" style="width: 0%; height: 100%; background: #4CAF50; transition: width 0.1s linear;"></div>
+                 </div>
+             </div>
+             <button id="btnPause" style="padding: 2px 8px; font-size: 0.8em; height: 24px; display: flex; align-items: center; justify-content: center; width: 24px;">
+                <svg width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+             </button>
+        </div>
+
+        <div class="training-layout">
+            <div class="viz-panel">
+                <canvas id="networkCanvas"></canvas>
+            </div>
+            <div class="stats-panel">
+                <div class="chart-container">
+                    <canvas id="lossChart"></canvas>
+                </div>
+                <div class="weight-map-container">
+                    <h4>Weight Map</h4>
+                    <small>Weights from 900 inputs to selected node</small>
+                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 5px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <canvas id="weightMapCanvas" class="weight-map-canvas" width="30" height="30"></canvas>
+                            <canvas id="weightLegendCanvas" width="150" height="15" style="margin-top: 5px; border: 1px solid #ddd; width: 150px; height: 15px; display: block;"></canvas>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-top: 5px;">
+                             <canvas id="weightDonutCanvas" width="150" height="150"></canvas>
+                             <div id="weightDonutValue" style="margin-top:5px; font-size:0.8em; font-weight:bold; color:#666;"></div>
+                        </div>
+                    </div>
+                    <div id="weightMapLabel" style="font-size:0.8em; color:#666;">None Selected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: EVALUATION -->
+    <div id="evaluation" class="tab-content">
+        <div class="controls">
+            <button id="btnClearDraw">Clear Canvas</button>
+            <button id="btnRandomTest">Random Test Shape</button>
+            <button id="btnFault">Generate Fault</button>
+            <div style="margin-left: 15px;">Draw a shape to see real-time network prediction.</div>
+        </div>
+        <div class="eval-layout">
+            <div class="draw-area">
+                <canvas id="drawCanvas" width="300" height="300"></canvas>
+                <div style="font-size: 0.8em; margin-top: 5px; color: #666;">Network Input (30x30):</div>
+                <canvas id="inputCanvas" width="30" height="30" style="border: 1px solid #ccc; image-rendering: pixelated; width: 60px; height: 60px;"></canvas>
+            </div>
+            <div class="viz-panel" style="flex:1;">
+                <!-- Reusing the visualizer logic, simpler view -->
+                <canvas id="liveNetworkCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIC -->
+<script>
+/**
+ * MATH & MATRIX UTILITIES
+ */
+class Matrix {
+    constructor(rows, cols) {
+        this.rows = rows;
+        this.cols = cols;
+        this.data = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
+    }
+
+    static fromArray(arr) {
+        let m = new Matrix(arr.length, 1);
+        for (let i = 0; i < arr.length; i++) {
+            m.data[i][0] = arr[i];
+        }
+        return m;
+    }
+
+    static toArray(m) {
+        let arr = [];
+        for (let i = 0; i < m.rows; i++) {
+            for (let j = 0; j < m.cols; j++) {
+                arr.push(m.data[i][j]);
+            }
+        }
+        return arr;
+    }
+
+    randomize() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                // Initialize weights randomly between -1 and 1
+                this.data[i][j] = Math.random() * 2 - 1;
+            }
+        }
+    }
+
+    add(n) {
+        if (n instanceof Matrix) {
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.cols; j++) {
+                    this.data[i][j] += n.data[i][j];
+                }
+            }
+        } else {
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.cols; j++) {
+                    this.data[i][j] += n;
+                }
+            }
+        }
+    }
+
+    static subtract(a, b) {
+        let result = new Matrix(a.rows, a.cols);
+        for (let i = 0; i < a.rows; i++) {
+            for (let j = 0; j < a.cols; j++) {
+                result.data[i][j] = a.data[i][j] - b.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    static multiply(a, b) {
+        // Matrix product
+        if (a.cols !== b.rows) {
+            console.error('Columns of A must match rows of B.');
+            return undefined;
+        }
+        let result = new Matrix(a.rows, b.cols);
+        for (let i = 0; i < result.rows; i++) {
+            for (let j = 0; j < result.cols; j++) {
+                let sum = 0;
+                for (let k = 0; k < a.cols; k++) {
+                    sum += a.data[i][k] * b.data[k][j];
+                }
+                result.data[i][j] = sum;
+            }
+        }
+        return result;
+    }
+
+    multiply(n) {
+        // Scalar or Element-wise
+        if (n instanceof Matrix) {
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.cols; j++) {
+                    this.data[i][j] *= n.data[i][j];
+                }
+            }
+        } else {
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.cols; j++) {
+                    this.data[i][j] *= n;
+                }
+            }
+        }
+    }
+
+    map(func) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.data[i][j] = func(this.data[i][j]);
+            }
+        }
+    }
+
+    static map(m, func) {
+        let result = new Matrix(m.rows, m.cols);
+        for (let i = 0; i < m.rows; i++) {
+            for (let j = 0; j < m.cols; j++) {
+                result.data[i][j] = func(m.data[i][j]);
+            }
+        }
+        return result;
+    }
+
+    static transpose(matrix) {
+        let result = new Matrix(matrix.cols, matrix.rows);
+        for (let i = 0; i < matrix.rows; i++) {
+            for (let j = 0; j < matrix.cols; j++) {
+                result.data[j][i] = matrix.data[i][j];
+            }
+        }
+        return result;
+    }
+}
+
+/**
+ * NEURAL NETWORK ENGINE (Vanilla JS)
+ */
+class NeuralNetwork {
+    constructor(layerSizes) {
+        // layerSizes is array, e.g., [900, 20, 10, 3]
+        this.layerSizes = layerSizes;
+        this.weights = [];
+        this.biases = [];
+        this.learningRate = 0.1;
+
+        // Initialize Weights and Biases
+        for (let i = 0; i < layerSizes.length - 1; i++) {
+            let w = new Matrix(layerSizes[i+1], layerSizes[i]);
+            w.randomize();
+            this.weights.push(w);
+
+            let b = new Matrix(layerSizes[i+1], 1);
+            b.randomize();
+            this.biases.push(b);
+        }
+        
+        // Store activation values for visualization
+        this.layerActivations = []; 
+    }
+
+    sigmoid(x) {
+        return 1 / (1 + Math.exp(-x));
+    }
+
+    dsigmoid(y) {
+        // derivative of sigmoid where y = sigmoid(x)
+        return y * (1 - y);
+    }
+
+    feedForward(inputArray) {
+        let inputs = Matrix.fromArray(inputArray);
+        this.layerActivations = [inputs]; // Store Input layer
+
+        let current = inputs;
+
+        for (let i = 0; i < this.weights.length; i++) {
+            let w = this.weights[i];
+            let b = this.biases[i];
+            
+            // Weighted sum
+            current = Matrix.multiply(w, current);
+            current.add(b);
+            // Activation
+            current.map(this.sigmoid);
+            
+            this.layerActivations.push(current);
+        }
+
+        return Matrix.toArray(current);
+    }
+
+    train(inputArray, targetArray) {
+        // 1. Feed Forward
+        this.feedForward(inputArray);
+
+        // 2. Calculate Errors & Backpropagate
+        let targets = Matrix.fromArray(targetArray);
+        let outputs = this.layerActivations[this.layerActivations.length - 1];
+        
+        // Output Error = Targets - Outputs
+        let error = Matrix.subtract(targets, outputs);
+        
+        // Calculate Total Loss (MSE) for tracking
+        let loss = 0;
+        Matrix.toArray(error).forEach(e => loss += e * e);
+
+        // Backpropagation Loop (Iterate backwards through layers)
+        for (let i = this.weights.length - 1; i >= 0; i--) {
+            // Calculate Gradient
+            // gradient = outputs * (1 - outputs)
+            let currentLayerOut = this.layerActivations[i + 1];
+            let gradients = Matrix.map(currentLayerOut, this.dsigmoid);
+            gradients.multiply(error);
+            gradients.multiply(this.learningRate);
+
+            // Calculate Deltas
+            let prevLayerT = Matrix.transpose(this.layerActivations[i]);
+            let weightDeltas = Matrix.multiply(gradients, prevLayerT);
+
+            // Adjust Weights and Biases
+            this.weights[i].add(weightDeltas);
+            this.biases[i].add(gradients);
+
+            // Calculate Error for next previous layer
+            if (i > 0) {
+                let weightsT = Matrix.transpose(this.weights[i]);
+                error = Matrix.multiply(weightsT, error);
+            }
+        }
+        
+        return loss;
+    }
+}
+
+/**
+ * DATA GENERATOR
+ */
+const DataGen = {
+    canvas: document.createElement('canvas'),
+    size: 30,
+    
+    init() {
+        this.canvas.width = this.size;
+        this.canvas.height = this.size;
+        this.ctx = this.canvas.getContext('2d');
+    },
+
+    generateImage(type, handDrawn = false) {
+        const ctx = this.ctx;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, this.size, this.size);
+        
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1 + Math.random() * 2; // Random thickness 1-3 (Avg 2)
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        
+        // Random transformations
+        const centerX = this.size / 2;
+        const centerY = this.size / 2;
+        const offsetX = (Math.random() - 0.5) * 8; // Shift +/- 4px
+        const offsetY = (Math.random() - 0.5) * 8;
+        const scale = 0.5 + Math.random() * 0.4;   // 0.5 to 0.9 scale
+        const angle = (Math.random() - 0.5) * Math.PI; // Rotation
+        
+        ctx.save();
+        ctx.translate(centerX + offsetX, centerY + offsetY);
+        ctx.rotate(angle);
+        ctx.scale(scale, scale);
+        
+        ctx.beginPath();
+        if (type === 'triangle') {
+            const r = 12;
+            if (handDrawn) {
+                // Perturb vertices
+                const jitter = () => (Math.random() - 0.5) * 6;
+                const p1 = { x: 0 + jitter(), y: -r + jitter() };
+                const p2 = { x: r * Math.sin(Math.PI/3) + jitter(), y: r * Math.cos(Math.PI/3) + jitter() };
+                const p3 = { x: -r * Math.sin(Math.PI/3) + jitter(), y: r * Math.cos(Math.PI/3) + jitter() };
+                
+                // Draw shaky lines
+                this.drawShakyLine(ctx, p1.x, p1.y, p2.x, p2.y);
+                this.drawShakyLine(ctx, p2.x, p2.y, p3.x, p3.y);
+                this.drawShakyLine(ctx, p3.x, p3.y, p1.x, p1.y);
+            } else {
+                ctx.moveTo(0, -r);
+                ctx.lineTo(r * Math.sin(Math.PI/3), r * Math.cos(Math.PI/3));
+                ctx.lineTo(-r * Math.sin(Math.PI/3), r * Math.cos(Math.PI/3));
+                ctx.closePath();
+            }
+        } else if (type === 'square') {
+            if (handDrawn) {
+                 const jitter = () => (Math.random() - 0.5) * 6;
+                 // Corners
+                 const tl = {x: -10 + jitter(), y: -10 + jitter()};
+                 const tr = {x: 10 + jitter(), y: -10 + jitter()};
+                 const br = {x: 10 + jitter(), y: 10 + jitter()};
+                 const bl = {x: -10 + jitter(), y: 10 + jitter()};
+                 
+                 this.drawShakyLine(ctx, tl.x, tl.y, tr.x, tr.y);
+                 this.drawShakyLine(ctx, tr.x, tr.y, br.x, br.y);
+                 this.drawShakyLine(ctx, br.x, br.y, bl.x, bl.y);
+                 this.drawShakyLine(ctx, bl.x, bl.y, tl.x, tl.y);
+            } else {
+                ctx.rect(-10, -10, 20, 20);
+            }
+        } else if (type === 'circle') {
+            if (handDrawn) {
+                // Distorted ellipse
+                const r = 11;
+                const jitter = () => (Math.random() - 0.5) * 8;
+                const rx = r + jitter();
+                const ry = r + jitter();
+                const rot = (Math.random() - 0.5);
+                // Draw slightly unclosed curve or multiple
+                ctx.ellipse(0, 0, rx, ry, rot, 0, Math.PI * 2 + (Math.random() * 0.4));
+            } else {
+                ctx.arc(0, 0, 11, 0, Math.PI * 2);
+            }
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // Get pixels
+        const imageData = ctx.getImageData(0, 0, this.size, this.size);
+        const pixels = imageData.data; // RGBA
+        
+        // Convert to grayscale 0-1 array (Inverted for Light Mode: Black=1)
+        let input = [];
+        for (let i = 0; i < pixels.length; i += 4) {
+            // Take R channel (since it's grayscale)
+            // White (255) -> 0, Black (0) -> 1
+            input.push(1 - (pixels[i] / 255));
+        }
+        
+        // Return object with input data and a data URL for display
+        return {
+            input: input,
+            label: type,
+            target: type === 'triangle' ? [1,0,0] : (type === 'square' ? [0,1,0] : [0,0,1]),
+            imgSrc: this.canvas.toDataURL()
+        };
+    },
+
+    drawShakyLine(ctx, x1, y1, x2, y2) {
+        ctx.moveTo(x1, y1);
+        // Add a control point slightly off the midpoint
+        const midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 12; // Much shakier
+        const midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 12;
+        ctx.quadraticCurveTo(midX, midY, x2, y2);
+    }
+};
+
+/**
+ * APP CONTROLLER
+ */
+const App = {
+    nn: null,
+    trainingData: [],
+    isTraining: false,
+    epoch: 0,
+    lossHistory: [],
+    animationId: null,
+    visualizerNodes: [], // Stores screen coordinates of nodes
+    selectedNode: null, // Track currently selected node {layerIndex, nodeIndex, logicW, logicH}
+    highlightedConnection: null, // {layerIndex, sourceIndex, targetIndex}
+
+    init() {
+        DataGen.init();
+        this.setupEventListeners();
+        this.setupChart();
+        this.createNetwork(); // Default network
+        this.renderNetworkGraph(document.getElementById('networkCanvas'));
+    },
+
+    setupEventListeners() {
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetBtn = e.currentTarget;
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                targetBtn.classList.add('active');
+                document.getElementById(targetBtn.dataset.tab).classList.add('active');
+                
+                if(targetBtn.dataset.tab === 'training') {
+                    this.resizeCanvas('networkCanvas');
+                    this.renderNetworkGraph(document.getElementById('networkCanvas'));
+                }
+                if(targetBtn.dataset.tab === 'evaluation') {
+                    this.resizeCanvas('liveNetworkCanvas');
+                    this.evalLoop();
+                } else {
+                    cancelAnimationFrame(this.evalReqId);
+                }
+            });
+        });
+
+        // Toggle Logic for Data Generation
+        const togglePerfect = document.getElementById('togglePerfect');
+        const toggleHandDrawn = document.getElementById('toggleHandDrawn');
+
+        const enforceOneToggle = (changed, other) => {
+            if (!changed.checked && !other.checked) {
+                other.checked = true;
+            }
+        };
+
+        togglePerfect.addEventListener('change', () => enforceOneToggle(togglePerfect, toggleHandDrawn));
+        toggleHandDrawn.addEventListener('change', () => enforceOneToggle(toggleHandDrawn, togglePerfect));
+
+        // Tab 1: Generate Data
+        document.getElementById('btnGenerate').addEventListener('click', () => {
+            this.generateDataset();
+        });
+
+        // Tab 2: Training Controls
+        document.getElementById('btnTrain').addEventListener('click', () => {
+            if (this.isTraining) {
+                this.stopTraining();
+            } else {
+                this.startTraining();
+            }
+        });
+
+        document.getElementById('btnReset').addEventListener('click', () => {
+            this.resetNetwork();
+        });
+        
+        // Disable Layer Config during training and confirm on change
+        const layerConfigInput = document.getElementById('layerConfig');
+        layerConfigInput.addEventListener('change', () => {
+             const hiddenStr = layerConfigInput.value;
+             // Check if it's different from current
+             // Reconstruct current config string from logical structure to compare
+             // this.nn.layerSizes = [900, 24, 12, 3]
+             // We want "24, 12"
+             const currentHidden = this.nn.layerSizes.slice(1, -1).join(", ");
+             
+             // Simple string comparison (ignoring spaces might be better but let's trust simple for now)
+             if(hiddenStr.replace(/\s/g, '') !== currentHidden.replace(/\s/g, '')) {
+                 const confirmReset = confirm("Changing layer configuration will reset the network and lose all trained data. Are you sure?");
+                 if(confirmReset) {
+                     this.resetNetwork();
+                 } else {
+                     // Revert
+                     layerConfigInput.value = currentHidden;
+                 }
+             }
+        });
+
+        document.getElementById('btnSave').addEventListener('click', () => this.saveModel());
+        document.getElementById('fileInput').addEventListener('change', (e) => this.loadModel(e));
+        
+        // Weight Map Interaction
+        const netCanvas = document.getElementById('networkCanvas');
+        netCanvas.addEventListener('click', (e) => this.handleNodeClick(e, netCanvas));
+        
+        // Weight Map Hover
+        const wMapCanvas = document.getElementById('weightMapCanvas');
+        wMapCanvas.addEventListener('mousemove', (e) => this.handleWeightMapHover(e));
+        wMapCanvas.addEventListener('mouseleave', () => {
+             // Reset highlight
+             this.highlightedConnection = null;
+             // We can reset label text if we want, but keeping "Node L..." is fine. 
+             // Maybe reset the added value text.
+             if(this.selectedNode) {
+                 const label = document.getElementById('weightMapLabel');
+                 // Revert to original text without value
+                 // Helper to reconstruct label
+                 const which = this.selectedNode.layerIndex === 1 ? "(Spatial)" : "(Flat)";
+                 label.textContent = `Node L${this.selectedNode.layerIndex} #${this.selectedNode.nodeIndex} ${which}`;
+             }
+             this.renderNetworkGraph(document.getElementById('networkCanvas'));
+        });
+
+        // Tab 3: Drawing
+        this.setupDrawingCanvas();
+
+        document.getElementById('btnRandomTest').addEventListener('click', () => {
+            const shapes = ['triangle', 'square', 'circle'];
+            const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            // Generate onto DataGen.canvas (30x30)
+            const generated = DataGen.generateImage(randomShape);
+            
+            // Draw scaled up to 300x300
+            const drawCanvas = document.getElementById('drawCanvas');
+            const ctx = drawCanvas.getContext('2d');
+            
+            // Run Inference on generated.input
+            const output = this.nn.feedForward(generated.input);
+            
+            // Determine Prediction
+            let maxVal = -1;
+            let maxIdx = -1;
+            for(let i=0; i<output.length; i++) {
+                if(output[i] > maxVal) {
+                    maxVal = output[i];
+                    maxIdx = i;
+                }
+            }
+            const predLabel = ['triangle','square','circle'][maxIdx];
+            const isCorrect = (predLabel === randomShape);
+            
+            // Draw original (black/white)
+            ctx.imageSmoothingEnabled = false; 
+            ctx.drawImage(DataGen.canvas, 0, 0, 300, 300);
+            
+            // Explicitly Update Small Input Canvas (since Static Eval is ON)
+            const inputCanvas = document.getElementById('inputCanvas');
+            const inputCtx = inputCanvas.getContext('2d');
+            inputCtx.clearRect(0,0,30,30);
+            inputCtx.drawImage(DataGen.canvas, 0, 0);
+
+            // Set Border Color
+            drawCanvas.style.border = isCorrect ? '5px solid #2e7d32' : '5px solid #d32f2f'; // Green / Red (Accent vs Error)
+
+            // Set Static Flag so loop doesn't overwrite
+            this.isStaticEval = true;
+            this.renderNetworkGraph(document.getElementById('liveNetworkCanvas'), output);
+        });
+
+        document.getElementById('btnFault').addEventListener('click', () => {
+             // Adversarial / Tricking Generator (Gradient Ascent on Input)
+             // Force the network to see a specific shape in noise
+             
+             // 1. Pick a random target class (0=triangle, 1=square, 2=circle)
+             const targetIdx = Math.floor(Math.random() * 3);
+             const targetLabel = ['triangle','square','circle'][targetIdx];
+             const target = [0,0,0]; 
+             target[targetIdx] = 1;
+
+             // 2. Start with random noise
+             let input = new Array(900).fill(0).map(() => Math.random());
+             
+             // 3. Gradient Ascent Loop
+             const lr = 0.8; // Aggressive learning rate
+             const iterations = 200; 
+
+             for(let k=0; k<iterations; k++) {
+                 // Forward Pass
+                 const outputs = this.nn.feedForward(input); // Updates this.nn.layerActivations
+                 
+                 // Stop if we are super confident
+                 if(outputs[targetIdx] > 0.999) break;
+
+                 // Backpropagate to Model Input
+                 // We want to maximize Target Output. ErrorGradient = (Target - Output)
+                 // Or rather, we use the derivative of the Cost function.
+                 
+                 // Step A: Output Deltas
+                 // delta_L = (t - y) * y * (1-y)
+                 let layerIdx = this.nn.layerActivations.length - 1;
+                 let outputLayer = this.nn.layerActivations[layerIdx].data; // Matrix data [3][1]
+                 
+                 let currentDelta = [];
+                 for(let i=0; i<outputLayer.length; i++) {
+                     let o = outputLayer[i][0];
+                     let t = target[i];
+                     let err = t - o; 
+                     let d = err * (o * (1 - o)); // dSigmoid
+                     currentDelta.push(d);
+                 }
+                 
+                 // Step B: Propagate backwards to Input
+                 for(let i = this.nn.weights.length - 1; i >= 0; i--) {
+                     let weights = this.nn.weights[i]; // Matrix [curr][prev]
+                     let prevActivations = this.nn.layerActivations[i]; // Matrix [prev][1]
+                     
+                     let nextDelta = new Array(weights.cols).fill(0);
+                     
+                     for(let c=0; c<weights.cols; c++) {
+                         let sum = 0;
+                         // W^T * delta
+                         for(let r=0; r<weights.rows; r++) {
+                             sum += weights.data[r][c] * currentDelta[r];
+                         }
+                         
+                         if(i > 0) {
+                             // Apply derivative of previous layer activation
+                             let a = prevActivations.data[c][0];
+                             nextDelta[c] = sum * (a * (1 - a));
+                         } else {
+                             // i==0. prevActivations is Input. It has no sigmoid.
+                             // The gradient at input is just the sum.
+                             nextDelta[c] = sum;
+                         }
+                     }
+                     currentDelta = nextDelta;
+                 }
+                 
+                 // Step C: Update Input
+                 // currentDelta is now the gradient of the Error w.r.t the Input
+                 // We add it to climb the hill (maximize confidence matching target)
+                 for(let i=0; i<900; i++) {
+                     input[i] += currentDelta[i] * lr;
+                     // Clamp to valid 0-1 range to keep image valid
+                     input[i] = Math.max(0, Math.min(1, input[i]));
+                 }
+             }
+
+             // 4. Render result
+             const drawCanvas = document.getElementById('drawCanvas');
+             const ctx = drawCanvas.getContext('2d');
+             
+             // Render logic (1=Black, 0=White)
+             DataGen.ctx.fillStyle = 'white';
+             DataGen.ctx.fillRect(0,0,30,30);
+             const id = DataGen.ctx.getImageData(0,0,30,30);
+             
+             for(let i=0; i<900; i++) {
+                 const val = Math.floor((1 - input[i]) * 255);
+                 const pIdx = i * 4;
+                 id.data[pIdx] = val;
+                 id.data[pIdx+1] = val;
+                 id.data[pIdx+2] = val;
+                 id.data[pIdx+3] = 255;
+             }
+             DataGen.ctx.putImageData(id, 0, 0);
+             
+             ctx.fillStyle = 'white';
+             ctx.fillRect(0, 0, 300, 300);
+             ctx.imageSmoothingEnabled = false; 
+             ctx.drawImage(DataGen.canvas, 0, 0, 300, 300);
+             
+             // Run final inference to update UI stats
+             const finalOut = this.nn.feedForward(input);
+             // Trigger visualizer update
+             this.renderNetworkGraph(document.getElementById('liveNetworkCanvas'), finalOut);
+             
+             // Unlock Loop so Input Canvas updates (and faults don't look 'stuck' if coming from Random Test)
+             this.isStaticEval = false;
+
+             console.log(`Fault Generated for ${targetLabel}. Confidence: ${finalOut[targetIdx].toFixed(4)}`);
+        });
+    },
+
+    createNetwork() {
+        const hiddenStr = document.getElementById('layerConfig').value;
+        const hiddenLayers = hiddenStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        const structure = [900, ...hiddenLayers, 3];
+        this.nn = new NeuralNetwork(structure);
+        console.log("Network Created:", structure);
+    },
+
+    resetNetwork() {
+        this.createNetwork();
+        this.lossHistory = [];
+        this.chart.data.labels = [];
+        this.chart.data.datasets[0].data = [];
+        this.chart.update();
+        this.visualizerNodes = []; // Clear graph nodes
+        this.selectedNode = null;
+        this.highlightedConnection = null;
+        this.renderNetworkGraph(document.getElementById('networkCanvas'));
+        document.getElementById('trainStatus').textContent = "Status: Reset";
+    },
+
+    generateDataset() {
+        const count = parseInt(document.getElementById('numSamples').value);
+        const usePerfect = document.getElementById('togglePerfect').checked;
+        const useHandDrawn = document.getElementById('toggleHandDrawn').checked;
+        this.trainingData = [];
+        
+        ['triangle', 'square', 'circle'].forEach(shape => {
+            const container = document.getElementById('grid' + shape.charAt(0).toUpperCase() + shape.slice(1));
+            container.innerHTML = '';
+            
+            for(let i=0; i<count; i++) {
+                // Determine style for this specific sample
+                let isHandDrawn = false;
+                if (usePerfect && useHandDrawn) {
+                    isHandDrawn = Math.random() < 0.5;
+                } else if (useHandDrawn) {
+                    isHandDrawn = true;
+                }
+                
+                const data = DataGen.generateImage(shape, isHandDrawn);
+                this.trainingData.push(data);
+                
+                // Add to grid
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                const img = new Image();
+                img.src = data.imgSrc;
+                img.width = 30;
+                img.height = 30;
+                img.style.border = '1px solid #ccc';
+                
+                // Add hover zoom listener
+                img.addEventListener('mouseenter', (e) => {
+                    const preview = document.getElementById('imagePreview');
+                    preview.style.display = 'block';
+                    preview.style.backgroundImage = `url(${data.imgSrc})`;
+                    preview.style.backgroundSize = '100% 100%';
+                    // Position nearby
+                    preview.style.left = (e.clientX + 15) + 'px';
+                    preview.style.top = (e.clientY + 15) + 'px';
+                });
+                img.addEventListener('mousemove', (e) => {
+                    const preview = document.getElementById('imagePreview');
+                    preview.style.left = (e.clientX + 15) + 'px';
+                    preview.style.top = (e.clientY + 15) + 'px';
+                });
+                img.addEventListener('mouseleave', () => {
+                    document.getElementById('imagePreview').style.display = 'none';
+                });
+
+                div.appendChild(img);
+                container.appendChild(div);
+            }
+        });
+        
+        // Shuffle
+        this.trainingData.sort(() => Math.random() - 0.5);
+        document.getElementById('datasetStatus').textContent = `Dataset containing ${this.trainingData.length} images`;
+        document.getElementById('datasetStatus').style.color = 'var(--accent)';
+    },
+
+    startTraining() {
+        if(this.trainingData.length === 0) {
+            alert("Please generate data first!");
+            return;
+        }
+        
+        this.isTraining = true;
+        this.isPaused = false;
+        document.getElementById('btnTrain').textContent = "Stop Training";
+        document.getElementById('layerConfig').disabled = true;
+        
+        // Show Progress Bar and reset Pause button
+        const progressContainer = document.getElementById('progressContainer');
+        progressContainer.style.display = 'flex';
+        const btnPause = document.getElementById('btnPause');
+        
+        // Use SVGs for Play/Pause
+        const iconPause = '<svg width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        const iconPlay = '<svg width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+        
+        btnPause.innerHTML = iconPause;
+        
+        btnPause.onclick = () => {
+             this.isPaused = !this.isPaused;
+             btnPause.innerHTML = this.isPaused ? iconPlay : iconPause;
+             
+             if (this.isPaused) {
+                 this.pauseStartTime = Date.now();
+             } else {
+                 this.totalPausedTime += (Date.now() - this.pauseStartTime);
+             }
+        };
+
+        this.nn.learningRate = parseFloat(document.getElementById('learningRate').value);
+        const maxEpochs = parseInt(document.getElementById('maxEpochs').value);
+        
+        this.epoch = 0;
+        let lastRenderTime = 0;
+        const startTime = Date.now();
+        this.totalPausedTime = 0;
+        this.pauseStartTime = 0;
+        
+        const formatTime = (ms) => {
+            if (!isFinite(ms) || ms < 0) return "--";
+            const s = Math.floor(ms / 1000);
+            if (s < 60) return s.toFixed(1) + "s";
+            
+            const m = Math.floor(s / 60);
+            const remS = Math.floor(s % 60);
+            if (m < 60) return `${m}m ${remS}s`;
+            
+            const h = Math.floor(m / 60);
+            const remM = m % 60;
+            return `${h}h ${remM}m ${remS}s`;
+        };
+        
+        // Chunk Training State
+        let trainIndex = 0; // Current index in trainingData for current epoch
+        let epochLoss = 0;
+        
+        const loop = (timestamp) => {
+            if(!this.isTraining) return;
+
+            if (this.isPaused) {
+                this.animationId = requestAnimationFrame(loop);
+                return;
+            }
+
+            // 1. Training Logic (Chunked for responsiveness)
+            const MAX_FRAME_TIME = 15; // ms budget for training per frame
+            const frameStart = performance.now();
+            let finishedEpoch = false;
+
+            // Initialize epoch start if needed
+            if (trainIndex === 0) {
+                // Shuffle data at start of epoch
+                this.trainingData.sort(() => Math.random() - 0.5);
+            }
+
+            // Process Batch
+            while (performance.now() - frameStart < MAX_FRAME_TIME) {
+                if (trainIndex >= this.trainingData.length) {
+                    finishedEpoch = true;
+                    break;
+                }
+                const data = this.trainingData[trainIndex];
+                epochLoss += this.nn.train(data.input, data.target);
+                trainIndex++;
+            }
+
+            // 2. Visual Updates (Prioritized: Run every frame if interval passed, even mid-epoch)
+            const liveViz = document.getElementById('cbLiveVisuals').checked;
+            const updateInterval = liveViz ? 100 : 500; 
+
+            if(timestamp - lastRenderTime > updateInterval) {
+                const now = Date.now();
+                const elapsed = now - startTime - this.totalPausedTime;
+                
+                // Estimate progress
+                // If we are mid-epoch, include the partial progress
+                const partialEpoch = this.epoch + (trainIndex / this.trainingData.length);
+                const progress = partialEpoch / maxEpochs;
+                
+                // Time calc
+                let leftStr = "--";
+                if (partialEpoch > 2 && progress > 0) { 
+                    const totalEst = elapsed / progress;
+                    const remaining = totalEst - elapsed;
+                    leftStr = formatTime(remaining);
+                }
+                const elapsedStr = formatTime(elapsed);
+                
+                // Update UI Labels
+                // Note: Average loss displayed will be from *previous* completed epoch until new one finishes
+                // Or we can show current running loss? current running loss is unstable.
+                // Let's show last known completed loss or "..."
+                const displayLoss = (this.epoch > 0) ? (epochLoss / (trainIndex || 1)).toFixed(5) : "..."; // Temporary approximation or previous?
+                // Better: keep the `avgLoss` from the last completed epoch in a variable if we want stability.
+                // For now, let's just show standard info.
+                
+                document.getElementById('trainStatus').textContent = `Epoch: ${this.epoch} / ${maxEpochs} | Loss: ${displayLoss}`;
+                document.getElementById('trainProgressBar').style.width = Math.min(progress * 100, 100) + "%";
+                document.getElementById('timeElapsed').textContent = `Elapsed: ${elapsedStr}`;
+                document.getElementById('timeLeft').textContent = `Left: ${leftStr}`;
+
+                if (liveViz) {
+                    // 1. Update Network Graph
+                    if (this.nn.layerActivations && this.nn.layerActivations.length > 0) {
+                         const lastLayerIdx = this.nn.layerActivations.length - 1;
+                         const output = Matrix.toArray(this.nn.layerActivations[lastLayerIdx]);
+                         this.renderNetworkGraph(document.getElementById('networkCanvas'), output);
+                    }
+
+                    // 2. Update Weight Map
+                    if (this.selectedNode) {
+                         const layerIdx = this.selectedNode.layerIndex;
+                         const weightsMatrix = this.nn.weights[layerIdx - 1]; 
+                         const newWeights = weightsMatrix.data[this.selectedNode.nodeIndex];
+                         this.selectedNode.weights = newWeights; 
+                         
+                         const isImage = (layerIdx === 1);
+                         this.drawWeightMap(newWeights, this.selectedNode, isImage);
+
+                         if (this.highlightedConnection && this.highlightedConnection.sourceIndex !== undefined) {
+                             const idx = this.highlightedConnection.sourceIndex;
+                             if (newWeights[idx] !== undefined) {
+                                 const val = newWeights[idx];
+                                 const label = document.getElementById('weightMapLabel');
+                                 const which = isImage ? "(Spatial)" : "(Flat)";
+                                 label.textContent = `Node L${layerIdx} #${this.selectedNode.nodeIndex} ${which} | Val: ${val.toFixed(4)}`;
+                                 this.drawWeightLegend(val);
+                                 this.drawWeightDonut(val);
+                             }
+                         }
+                    }
+                }
+                lastRenderTime = timestamp;
+            }
+
+            // 3. Epoch Completion Logic
+            if(finishedEpoch) {
+                const avgLoss = epochLoss / this.trainingData.length;
+                this.updateChart(this.epoch + 1, avgLoss); // Chart uses 1-based epoch? or 0? 
+                
+                this.epoch++;
+                trainIndex = 0;
+                epochLoss = 0;
+
+                if (this.epoch >= maxEpochs) {
+                    this.stopTraining();
+                    
+                    // Final UI Update
+                    const finalNow = Date.now();
+                    const finalElapsed = finalNow - startTime - this.totalPausedTime;
+                    document.getElementById('trainProgressBar').style.width = "100%";
+                    document.getElementById('timeElapsed').textContent = `Elapsed: ${formatTime(finalElapsed)}`;
+                    document.getElementById('timeLeft').textContent = "Left: 0.0s";
+                    document.getElementById('trainStatus').textContent = `Done. Final Loss: ${avgLoss.toFixed(5)}`;
+                    
+                    if (this.nn.layerActivations && this.nn.layerActivations.length > 0) {
+                         const output = Matrix.toArray(this.nn.layerActivations[this.nn.layerActivations.length - 1]);
+                         this.renderNetworkGraph(document.getElementById('networkCanvas'), output);
+                    }
+                    return;
+                }
+            }
+
+            // Continue loop
+            this.animationId = requestAnimationFrame(loop);
+        };
+        // Use requestAnimationFrame to start and get timestamp
+        this.animationId = requestAnimationFrame(loop);
+    },
+
+    stopTraining() {
+        this.isTraining = false;
+        document.getElementById('btnTrain').textContent = "Start Training";
+        document.getElementById('progressContainer').style.display = 'none';
+        document.getElementById('layerConfig').disabled = false;
+        cancelAnimationFrame(this.animationId);
+    },
+
+    saveModel() {
+        const modelData = {
+            layerSizes: this.nn.layerSizes,
+            weights: this.nn.weights.map(m => m.data),
+            biases: this.nn.biases.map(m => m.data),
+            learningRate: this.nn.learningRate,
+            epoch: this.epoch || 0,
+            maxEpochs: parseInt(document.getElementById('maxEpochs').value) || 200,
+            lossHistory: this.lossHistory || []
+        };
+        
+        const blob = new Blob([JSON.stringify(modelData)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `neural_network_model_E${modelData.epoch}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    },
+
+    loadModel(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                
+                // Validate basic structure
+                if (!data.layerSizes || !data.weights || !data.biases) {
+                    alert("Invalid model file");
+                    return;
+                }
+                
+                // Reconstruct Network
+                // Updates the input text to match loaded layers
+                const configStr = data.layerSizes.slice(1, -1).join(", ");
+                document.getElementById('layerConfig').value = configStr;
+                
+                // Init new network structure
+                this.nn = new NeuralNetwork(data.layerSizes);
+                this.nn.learningRate = data.learningRate || 0.1;
+                document.getElementById('learningRate').value = this.nn.learningRate;
+                
+                // Inject Weights
+                for(let i=0; i < this.nn.weights.length; i++) {
+                     const wMatrix = this.nn.weights[i];
+                     const loadedData = data.weights[i];
+                     // Copy data
+                     wMatrix.data = loadedData;
+                     // Verify dims
+                     if (wMatrix.rows !== loadedData.length || wMatrix.cols !== loadedData[0].length) {
+                         throw new Error("Weight matrix dimension mismatch");
+                     }
+                }
+                
+                // Inject Biases
+                for(let i=0; i < this.nn.biases.length; i++) {
+                     const bMatrix = this.nn.biases[i];
+                     const loadedData = data.biases[i];
+                     bMatrix.data = loadedData;
+                }
+                
+                // Restore Training State
+                if (data.epoch !== undefined) this.epoch = data.epoch;
+                if (data.maxEpochs !== undefined) document.getElementById('maxEpochs').value = data.maxEpochs;
+                
+                // Restore Chart and History
+                if (data.lossHistory) {
+                    this.lossHistory = data.lossHistory;
+                    this.chart.data.labels = this.lossHistory.map(h => h.x);
+                    this.chart.data.datasets[0].data = this.lossHistory.map(h => h.y);
+                    this.chart.update();
+                    
+                    if (this.lossHistory.length > 0) {
+                        const last = this.lossHistory[this.lossHistory.length - 1];
+                        document.getElementById('trainStatus').textContent = `Status: Model Loaded | Epoch: ${this.epoch} | Last Loss: ${last.y.toFixed(5)}`;
+                    } else {
+                        document.getElementById('trainStatus').textContent = "Status: Model Loaded (No history)";
+                    }
+                } else {
+                    // Reset Chart
+                    this.lossHistory = [];
+                    this.chart.data.labels = [];
+                    this.chart.data.datasets[0].data = [];
+                    this.chart.update();
+                    document.getElementById('trainStatus').textContent = "Status: Model Loaded";
+                }
+
+                // Reset Visuals
+                this.renderNetworkGraph(document.getElementById('networkCanvas'));
+                
+            } catch (err) {
+                console.error(err);
+                alert("Error loading model: " + err.message);
+            }
+        };
+        reader.readAsText(file);
+        // Reset input so same file can be selected again
+        e.target.value = '';
+    },
+
+    /**
+     * VISUALIZATION LOGIC
+     */
+    resizeCanvas(id) {
+        const cvs = document.getElementById(id);
+        const parent = cvs.parentElement;
+        cvs.width = parent.clientWidth;
+        cvs.height = parent.clientHeight;
+    },
+
+    /**
+     * UTILS
+     */
+    getWeightColor(weight) {
+        // Red (-1) <-> Blue (0) <-> Green (1)
+        // We clamp weight between -2 and 2 for color implementation to handle outliers
+        const val = Math.max(-2, Math.min(2, weight));
+        
+        let r=0, g=0, b=0;
+        
+        // Using a more vibrant palette
+        if (val < 0) {
+            // Negative: Red (Trend towards Blue at 0)
+            const t = Math.abs(val); 
+            // Blend Blue(0,0,255) to Red(255,0,0)
+            // Actually user wants Blue=Neutral. 
+            // So 0 = Blue. -1 = Red. +1 = Green.
+            
+            // Interpolate Blue to Red
+            // Blue: 0,0,255. Red: 255,0,0
+            // t goes 0 -> 1
+            r = Math.floor(255 * Math.min(1, t));
+            b = Math.floor(255 * (1 - Math.min(1, t)));
+            g = 0;
+        } else {
+            // Positive: Green (Trend towards Blue at 0)
+            const t = val;
+            // Interpolate Blue to Green
+            // Blue: 0,0,255. Green: 0,255,0
+            r = 0;
+            g = Math.floor(255 * Math.min(1, t));
+            b = Math.floor(255 * (1 - Math.min(1, t)));
+        }
+
+        return `rgb(${r},${g},${b})`;
+    },
+
+    renderNetworkGraph(canvas, predictions = null) {
+        this.visualizerNodes = []; // Reset nodes for click detection
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0,0,w,h);
+        
+        const layers = this.nn.layerSizes; // e.g. [900, 24, 12, 3]
+        const layerGap = (predictions) ? w / (layers.length + 0.5) : w / layers.length; // Add space for preds if present
+        
+        // Calculate node positions for all layers first
+        const nodePositions = [];
+        let highlightedData = null; // Store highlight for final draw
+        
+        for(let l = 0; l < layers.length; l++) {
+            const count = layers[l];
+            const x = (l * layerGap) + (layerGap / 2);
+            /* Lines 1070-1110 omitted */
+            const positions = [];
+            
+            if (l === 0) {
+                // Input 30x30 Image Raster
+                const side = 150; 
+                const boxX = x - (side/2);
+                const boxY = h/2 - (side/2);
+                
+                // Draw Label
+                ctx.fillStyle = '#666';
+                ctx.textAlign = 'center';
+                ctx.fillText("Input 30x30", x, boxY - 10);
+                
+                // Draw Border
+                ctx.strokeStyle = '#ccc';
+                ctx.strokeRect(boxX, boxY, side, side);
+                
+                const cellS = side / 30;
+
+                // Pre-calc 900 points
+                for (let r=0; r<30; r++) {
+                    for (let c=0; c<30; c++) {
+                        positions.push({
+                            x: boxX + (c * cellS) + (cellS/2), // Center for connections
+                            y: boxY + (r * cellS) + (cellS/2),
+                            rectX: boxX + (c * cellS),         // TopLeft for pixel draw
+                            rectY: boxY + (r * cellS),
+                            size: cellS
+                        });
+                    }
+                }
+            } else {
+                // Standard Vertical Column Layout
+                const maxNodes = 25; // Visualizing max 25 nodes
+                const nodesToDraw = Math.min(count, maxNodes);
+                const stepY = h / (nodesToDraw + 1);
+                
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                const label = l === layers.length - 1 ? "Output" : `Hidden ${l}`;
+                ctx.fillText(label, x, 20);
+
+                for(let i = 0; i < nodesToDraw; i++) {
+                    positions.push({
+                        x: x,
+                        y: (i + 1) * stepY,
+                        actualIndex: i // Keep track if we clip
+                    });
+                }
+            }
+            nodePositions.push(positions);
+        }
+
+        this.visualizerNodes = []; // Reset click targets
+
+        ctx.globalAlpha = 1.0;
+
+        // DRAW INPUT RASTER (Layer 0)
+        if (nodePositions[0] && this.nn.layerActivations && this.nn.layerActivations[0]) {
+            const inputs = Matrix.toArray(this.nn.layerActivations[0]);
+            const pts = nodePositions[0];
+            const len = Math.min(inputs.length, pts.length);
+            
+            for(let i=0; i<len; i++) {
+                const pt = pts[i];
+                if (pt.rectX === undefined) continue;
+
+                const val = inputs[i]; 
+                // 1.0 = Black (Ink), 0.0 = White (Bg)
+                const intensity = Math.floor((1 - val) * 255);
+                ctx.fillStyle = `rgb(${intensity},${intensity},${intensity})`;
+                ctx.fillRect(pt.rectX, pt.rectY, pt.size + 0.5, pt.size + 0.5);
+            }
+        }
+
+        // DRAW CONNECTIONS
+        for (let l = 0; l < layers.length - 1; l++) {
+            const sourcePoints = nodePositions[l];
+            const targetPoints = nodePositions[l+1];
+            const weights = this.nn.weights[l]; 
+
+            const isHeavyLayer = l === 0;
+
+            for (let t = 0; t < targetPoints.length; t++) {
+                const targetNode = targetPoints[t];
+                
+                for (let s = 0; s < sourcePoints.length; s++) {
+                    const sourceNode = sourcePoints[s];
+                    
+                    const weightVal = weights.data[t][s];
+                    const color = this.getWeightColor(weightVal);
+                    
+                    // Check if this connection is highlighted
+                    let isHighlighted = false;
+                    const isAnyHighlighted = !!this.highlightedConnection;
+
+                    if (isAnyHighlighted && this.highlightedConnection.layerIndex === l + 1) {
+                         const tIdx = (targetNode.actualIndex !== undefined) ? targetNode.actualIndex : t;
+                         const sIdx = (sourceNode.actualIndex !== undefined) ? sourceNode.actualIndex : s;
+
+                         if (tIdx === this.highlightedConnection.targetIndex && 
+                             sIdx === this.highlightedConnection.sourceIndex) {
+                             isHighlighted = true;
+                             highlightedData = {
+                                 sx: sourceNode.x, sy: sourceNode.y,
+                                 tx: targetNode.x, ty: targetNode.y,
+                                 color: color
+                             };
+                         }
+                    }
+                    
+                    if (!isHighlighted && Math.abs(weightVal) < 0.05 && isHeavyLayer) continue;
+
+                    const width = Math.min(3, Math.abs(weightVal) * (isHeavyLayer ? 0.5 : 2));
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(sourceNode.x, sourceNode.y);
+                    ctx.lineTo(targetNode.x, targetNode.y);
+                    
+                    if (isHighlighted) {
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 4;
+                        ctx.globalAlpha = 1.0;
+                    } else if (isAnyHighlighted) {
+                        ctx.strokeStyle = color; // Keep weight color even when faded
+                        ctx.lineWidth = isHeavyLayer ? 0.5 : 1; 
+                        ctx.globalAlpha = 0.1; // Very transparent but colored
+                    } else {
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = isHeavyLayer ? 0.3 : width; 
+                        // Reduced opacity by 50% to make the input raster more visible
+                        ctx.globalAlpha = isHeavyLayer ? 0.1 : 0.3;
+                    }
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // DRAW HIGHLIGHTED CONNECTION
+        if (highlightedData) {
+            ctx.beginPath();
+            ctx.moveTo(highlightedData.sx, highlightedData.sy);
+            ctx.lineTo(highlightedData.tx, highlightedData.ty);
+            ctx.strokeStyle = highlightedData.color;
+            ctx.lineWidth = 4;
+            ctx.globalAlpha = 1.0;
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1.0;
+
+        // DRAW NODES & PREDICTIONS
+        for (let l = 1; l < layers.length; l++) {
+            const positions = nodePositions[l];
+            const activations = (this.nn.layerActivations && this.nn.layerActivations[l]) 
+                ? Matrix.toArray(this.nn.layerActivations[l]) 
+                : null;
+
+            for (let i = 0; i < positions.length; i++) {
+                const node = positions[i];
+                const actVal = activations ? activations[i] : 0;
+                
+                // Node Visualization
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 8, 0, Math.PI*2);
+                
+                const intensity = Math.floor(actVal * 255);
+                ctx.fillStyle = `rgb(${255-intensity}, 255, ${255-intensity})`; 
+                ctx.fill();
+                
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                this.visualizerNodes.push({
+                    layerIndex: l,
+                    nodeIndex: i,
+                    x: node.x,
+                    y: node.y,
+                    r: 8
+                });
+                
+                // If this is the Output Layer AND we have predictions, draw result
+                if (l === layers.length - 1 && predictions) {
+                    const predVal = predictions[i]; // 0-1
+                    // Scale everything up ~3x
+                    const cx = node.x + 80; // Draw further to the right
+                    const cy = node.y;
+                    const r = 54; // 18 * 3
+                    
+                    // Donut Background
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI*2);
+                    ctx.fillStyle = '#eee';
+                    ctx.fill();
+                    
+                    // Donut Value (Arc)
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    // Start from top (-PI/2)
+                    ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + (Math.PI*2 * predVal));
+                    ctx.lineTo(cx, cy);
+                    ctx.fillStyle = '#2e7d32'; // Accent green
+                    ctx.fill();
+                    
+                    // Donut Hole (White Inner)
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r - 15, 0, Math.PI*2); // Thicker ring
+                    ctx.fillStyle = '#ffffff'; // BG color
+                    ctx.fill();
+                    
+                    // Draw Shape Icon in Center
+                    ctx.fillStyle = '#333';
+                    const iconSize = 24; // 8 * 3
+                    ctx.beginPath();
+                    if (i === 0) { // Triangle
+                        // Draw triangle centered at cx, cy
+                         const hOffset = iconSize/2;
+                         const vOffset = iconSize/2;
+                         ctx.moveTo(cx, cy - vOffset - 2);
+                         ctx.lineTo(cx + hOffset + 2, cy + vOffset);
+                         ctx.lineTo(cx - hOffset - 2, cy + vOffset);
+                    } else if (i === 1) { // Square
+                        ctx.rect(cx - iconSize/2, cy - iconSize/2, iconSize, iconSize);
+                    } else if (i === 2) { // Circle
+                        ctx.arc(cx, cy, iconSize/2 + 3, 0, Math.PI*2);
+                    }
+                    ctx.fill();
+
+                    // Text Percentage below or to the side? The instruction was "underneath it" 
+                    // in previous request, but visually it's often better inside if space permits, 
+                    // or to the right. The original code put it to the right `cx + 25`.
+                    // But now the donut is huge. Let's put it clearly to the right of the donut.
+                    ctx.fillStyle = '#2e7d32';
+                    ctx.font = "bold 24px Segoe UI"; // 3x bigger
+                    ctx.textAlign = 'left';
+                    ctx.fillText((predVal*100).toFixed(0) + "%", cx + 70, cy + 10);
+                }
+            }
+        }
+    },
+
+    handleNodeClick(e, canvas) {
+        const rect = canvas.getBoundingClientRect();
+        // Handle CSS scaling vs Internal resolution
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+
+        // Find clicked node
+        const clicked = this.visualizerNodes.find(n => {
+            const dx = n.x - mx;
+            const dy = n.y - my;
+            return Math.sqrt(dx*dx + dy*dy) < (n.r + 5);
+        });
+
+        if(clicked) {
+            this.selectedNode = clicked;
+            // Get weights connecting Previous Layer -> This Node
+            const layerIdx = clicked.layerIndex;
+            const weightsMatrix = this.nn.weights[layerIdx - 1]; // Weights from L(i-1) to L(i)
+            
+            const nodeIndex = clicked.nodeIndex;
+            const weights = weightsMatrix.data[nodeIndex]; 
+
+            // Visualization Strategy:
+            // L1 (Hidden 1): Maps to Input (30x30 Image)
+            // L2+: Maps to 1D vector of previous neurons. We can visualize as a 1D strip or grid.
+            
+            let isImage = (layerIdx === 1);
+            this.drawWeightMap(weights, clicked, isImage);
+        } else {
+             // If clicked empty space, clear selection
+             this.selectedNode = null;
+             this.highlightedConnection = null;
+             // Clear weight map canvases
+             const wcvs = document.getElementById('weightMapCanvas');
+             wcvs.getContext('2d').clearRect(0,0,wcvs.width,wcvs.height);
+             const lcvs = document.getElementById('weightLegendCanvas');
+             if(lcvs) lcvs.getContext('2d').clearRect(0,0,lcvs.width,lcvs.height);
+             
+             // Clear Donut
+             this.drawWeightDonut(null);
+
+             document.getElementById('weightMapLabel').textContent = "None Selected";
+             this.renderNetworkGraph(document.getElementById('networkCanvas'));
+        }
+    },
+
+    handleWeightMapHover(e) {
+        if (!this.selectedNode || !this.selectedNode.weights) return;
+
+        const canvas = document.getElementById('weightMapCanvas');
+        const rect = canvas.getBoundingClientRect();
+        
+        // Mouse pos relative to canvas element (0..150)
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        // Canvas resolution is fixed 150x150. CSS matches.
+        // We need to map 0..150 back to logic grid logicW x logicH.
+        // cellW = 150 / logicW
+        
+        const w = 150;
+        const h = 150;
+        if (mx < 0 || my < 0 || mx > w || my > h) return;
+
+        const logicW = this.selectedNode.logicW;
+        const logicH = this.selectedNode.logicH;
+
+        const col = Math.floor(mx / (w / logicW));
+        const row = Math.floor(my / (h / logicH));
+        
+        if (col < 0 || col >= logicW || row < 0 || row >= logicH) return;
+
+        const index = row * logicW + col;
+        const weightVal = this.selectedNode.weights[index];
+
+        if (weightVal !== undefined) {
+             // Update Label
+             const label = document.getElementById('weightMapLabel');
+             const which = this.selectedNode.layerIndex === 1 ? "(Spatial)" : "(Flat)";
+             label.textContent = `Node L${this.selectedNode.layerIndex} #${this.selectedNode.nodeIndex} ${which} | Val: ${weightVal.toFixed(4)}`;
+
+             // Update Highlight
+             // We are looking at connection FROM index (in Layer L-1) TO this.selectedNode (in Layer L)
+             this.highlightedConnection = {
+                 layerIndex: this.selectedNode.layerIndex, // Connects L-1 -> L
+                 targetIndex: this.selectedNode.nodeIndex, // Node in L
+                 sourceIndex: index                        // Node in L-1
+             };
+             
+             // Trigger re-render of graph to show line
+             this.renderNetworkGraph(document.getElementById('networkCanvas'));
+
+             // Update Legend Marker
+             this.drawWeightLegend(weightVal);
+             
+             // Update Donut
+             this.drawWeightDonut(weightVal);
+        }
+    },
+
+    drawWeightDonut(weightVal) {
+        const cvs = document.getElementById('weightDonutCanvas');
+        if (!cvs) return;
+        const ctx = cvs.getContext('2d');
+        const valDiv = document.getElementById('weightDonutValue');
+        
+        // Update Text
+        if (weightVal === null) {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            valDiv.textContent = "";
+            return;
+        }
+
+        valDiv.textContent = weightVal.toFixed(4);
+
+        const w = cvs.width;
+        const h = cvs.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const rOuter = (Math.min(w, h) / 2) - 10;
+        const rInner = rOuter - 25;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Gauge Track
+        // 0 is Top (-PI/2)
+        // Max (+2) is -60 degrees (Top Right area). Angle from Top = +150 deg (5PI/6)
+        // Min (-2) is 240 degrees (Bottom Left area). Angle from Top = -150 deg (-5PI/6)
+        
+        const topAngle = -Math.PI / 2;
+        const range = 5 * Math.PI / 6; // 150 degrees
+        
+        const startTrack = topAngle - range;
+        const endTrack = topAngle + range;
+
+        // Draw Track (Gray Background)
+        ctx.beginPath();
+        // Outer Arc
+        ctx.arc(cx, cy, rOuter, startTrack, endTrack); // Draws clockwise from min to max
+        // Inner Arc (Reverse)
+        ctx.arc(cx, cy, rInner, endTrack, startTrack, true); 
+        ctx.closePath();
+        ctx.fillStyle = '#eee';
+        ctx.fill();
+
+        // Draw Value Arc
+        const val = Math.max(-2, Math.min(2, weightVal));
+        const color = this.getWeightColor(val);
+        
+        // Calculate extent based on value fraction of 2.0
+        // val=1 => angle = top + (1/2)*range
+        // val=-1 => angle = top + (-1/2)*range
+        const angleSpan = (val / 2.0) * range;
+        const targetAngle = topAngle + angleSpan;
+
+        ctx.beginPath();
+        // Define arc points based on direction
+        // If val > 0: Arc from Top to Target (Clockwise)
+        // If val < 0: Arc from Top to Target (Counter-Clockwise)
+        
+        if (val >= 0) {
+            ctx.arc(cx, cy, rOuter, topAngle, targetAngle);
+            ctx.arc(cx, cy, rInner, targetAngle, topAngle, true);
+        } else {
+            // Negative: Draw from Target to Top to respect standard winding or just use ccw arg
+            // arc(..., start, end, true) draws ccw from start to end
+            // We want from Top(start) to Target(end) CCW? 
+            ctx.arc(cx, cy, rOuter, topAngle, targetAngle, true);
+            ctx.arc(cx, cy, rInner, targetAngle, topAngle, false);
+        }
+        
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    },
+
+    // New helper to draw the gradient legend
+    drawWeightLegend(highlightVal = null) {
+        const cvs = document.getElementById('weightLegendCanvas');
+        if (!cvs) return;
+        const ctx = cvs.getContext('2d');
+        const W = cvs.width;
+        const H = cvs.height;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Draw Gradient
+        // Range -2 to 2
+        for (let x = 0; x < W; x++) {
+            // map x (0..W) to val (-2..2)
+            const val = -2 + (x / W) * 4;
+            
+            // Logic from getWeightColor
+            let r=0, g=0, b=0;
+            // clamp for color calc just like main visualization
+            // but we want to show the full range
+            const tVal = Math.max(-2, Math.min(2, val));
+
+            if (tVal < 0) {
+                const t = Math.abs(tVal);
+                r = Math.floor(255 * Math.min(1, t));
+                b = Math.floor(255 * (1 - Math.min(1, t)));
+            } else {
+                const t = tVal;
+                g = Math.floor(255 * Math.min(1, t));
+                b = Math.floor(255 * (1 - Math.min(1, t)));
+            }
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(x, 0, 1, H);
+        }
+
+        // Draw Highlight Markers
+        if (highlightVal !== null) {
+            // Map value to x
+            // x = (val - (-2)) / 4 * W
+            // x = (val + 2) / 4 * W
+            // clamp to canvas bounds
+            const valClamped = Math.max(-2, Math.min(2, highlightVal));
+            const x = ((valClamped + 2) / 4) * W;
+
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            
+            // Top Triangle (pointing down)
+            ctx.moveTo(x - 4, 0);
+            ctx.lineTo(x + 4, 0);
+            ctx.lineTo(x, 5);
+            ctx.fill();
+
+            // Bottom Triangle (pointing up)
+            ctx.moveTo(x - 4, H);
+            ctx.lineTo(x + 4, H);
+            ctx.lineTo(x, H - 5);
+            ctx.fill();
+        }
+    },
+
+    drawWeightMap(weights, clickedNode, isImage) {
+        const canvas = document.getElementById('weightMapCanvas');
+        const label = document.getElementById('weightMapLabel');
+        const ctx = canvas.getContext('2d');
+        
+        // Define minimum pixel blocks for visualization
+        // The user wants each parameter "pixel" to be at least 5x5 physical pixels on the canvas
+        // (Handled by strict 150x150 size vs small logic grid)
+
+        // Resize canvas based on type
+        let logicW, logicH;
+        if(isImage) {
+            logicW = 30;
+            logicH = 30;
+            label.textContent = `Node L${clickedNode.layerIndex} #${clickedNode.nodeIndex} (Spatial)`;
+        } else {
+            // Layout a small grid for non-spatial weights
+            const cols = Math.ceil(Math.sqrt(weights.length));
+            const rows = Math.ceil(weights.length / cols);
+            logicW = cols;
+            logicH = rows;
+            label.textContent = `Node L${clickedNode.layerIndex} #${clickedNode.nodeIndex} (Flat)`;
+        }
+        
+        // Store metadata for interactivity
+        // We modify the clickedNode object provided by visualizer or a new stored ref
+        if(!clickedNode.weights) { 
+            // Better to update this.selectedNode directly since clickedNode might be ephemeral from finding
+        }
+        this.selectedNode.logicW = logicW;
+        this.selectedNode.logicH = logicH;
+        this.selectedNode.weights = weights;
+
+        // Set Actual Canvas Size to be fixed 150x150
+        canvas.width = 150;
+        canvas.height = 150;
+
+
+        const cellW = canvas.width / logicW;
+        const cellH = canvas.height / logicH;
+
+        // Use consistent color scale (Blue=0, Red=Neg, Green=Pos)
+        // No normalization 'min-max' scaling, because we want to see absolute sign importance.
+        // We assume weights are roughly within -2 to 2 range.
+        
+        for(let i=0; i < weights.length; i++) {
+            const w = weights[i];
+            
+            // Re-use logic from getWeightColor but get raw RGB
+            const val = Math.max(-2, Math.min(2, w));
+            let r=0, g=0, b=0;
+            if (val < 0) {
+                const t = Math.abs(val);
+                r = Math.floor(255 * Math.min(1, t));
+                b = Math.floor(255 * (1 - Math.min(1, t)));
+            } else {
+                const t = val;
+                g = Math.floor(255 * Math.min(1, t));
+                b = Math.floor(255 * (1 - Math.min(1, t)));
+            }
+            
+            // Draw rectangle for this weight
+            const col = i % logicW;
+            const row = Math.floor(i / logicW);
+            
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            // Use Math.ceil to avoid sub-pixel gaps
+            ctx.fillRect(col * cellW, row * cellH, cellW + 0.5, cellH + 0.5);
+        }
+        
+        // Initial draw of legend
+        this.drawWeightLegend(null);
+    },
+
+    setupChart() {
+        const ctx = document.getElementById('lossChart').getContext('2d');
+        Chart.defaults.color = '#666';
+        Chart.defaults.borderColor = '#ddd';
+        
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'MSE Loss',
+                    data: [],
+                    borderColor: '#2e7d32',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: { title: { display: true, text: 'Epoch' }},
+                    y: { title: { display: true, text: 'Loss' }, beginAtZero: true }
+                }
+            }
+        });
+    },
+
+    updateChart(epoch, loss) {
+        this.lossHistory.push({x: epoch, y: loss});
+        this.chart.data.labels.push(epoch);
+        this.chart.data.datasets[0].data.push(loss);
+        this.chart.update();
+    },
+
+    /**
+     * EVALUATION / DRAWING
+     */
+    setupDrawingCanvas() {
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        // White background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0,0,300,300);
+
+        const getPos = (e) => {
+            const r = canvas.getBoundingClientRect();
+            return { x: e.clientX - r.left, y: e.clientY - r.top };
+        };
+
+        canvas.addEventListener('mousedown', (e) => {
+            this.isStaticEval = false; // Reset static flag on user interaction
+            isDrawing = true;
+            ctx.beginPath();
+            const p = getPos(e);
+            ctx.moveTo(p.x, p.y);
+        });
+
+        window.addEventListener('mouseup', () => isDrawing = false);
+
+        canvas.addEventListener('mousemove', (e) => {
+            if(!isDrawing) return;
+            this.isStaticEval = false; // Ensure cleared on draw
+            canvas.style.border = '2px solid #ccc'; // Reset border
+            const p = getPos(e);
+            // Match relative thickness: Avg Training (2/30) = Drawing (20/300)
+            ctx.lineWidth = 20; 
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+        });
+
+        document.getElementById('btnClearDraw').addEventListener('click', () => {
+             this.isStaticEval = false;
+             canvas.style.border = '2px solid #ccc'; // Reset border
+             ctx.fillStyle = 'white';
+             ctx.fillRect(0,0,300,300);
+             // Logic updatePrediction call isn't actually defined here? It likely failed before. 
+        });
+    },
+
+    evalLoop() {
+        // Run inference ~30fps
+        const run = () => {
+            if(!document.getElementById('evaluation').classList.contains('active')) return;
+            
+            // If static eval (test image result), don't update inference from canvas
+            // But still need to keep the animation frame loop alive in case user clears/draws
+            if (!this.isStaticEval) {
+                const drawCanvas = document.getElementById('drawCanvas');
+                
+                // Downsample to 30x30
+                // We use the shared helper canvas from DataGen for this
+                const tempCtx = DataGen.ctx;
+
+                // Ensure clean state before drawing
+                tempCtx.globalCompositeOperation = 'source-over';
+                tempCtx.fillStyle = 'white';
+                tempCtx.fillRect(0, 0, 30, 30);
+                tempCtx.imageSmoothingEnabled = true; // Ensure smoothing for downsampling
+                tempCtx.imageSmoothingQuality = 'high';
+
+                tempCtx.drawImage(drawCanvas, 0, 0, 30, 30);
+
+                // Show on UI Input Canvas
+                const inputCanvas = document.getElementById('inputCanvas');
+                const inputCtx = inputCanvas.getContext('2d');
+                inputCtx.clearRect(0,0,30,30);
+                inputCtx.drawImage(DataGen.canvas, 0, 0);
+
+                const imgData = tempCtx.getImageData(0,0,30,30);
+                
+                // Flatten
+                const input = [];
+                for(let i=0; i<imgData.data.length; i+=4) {
+                    // Invert input for light theme logic (White=0, Black=1)
+                    input.push(1 - (imgData.data[i]/255));
+                }
+                
+                const output = this.nn.feedForward(input);
+                this.renderNetworkGraph(document.getElementById('liveNetworkCanvas'), output);
+            }
+            
+            this.evalReqId = requestAnimationFrame(run);
+        };
+        run();
+    },
+
+    updatePrediction(output) {
+        const setDonut = (id, valId, val) => {
+            const pct = (val * 100).toFixed(1);
+            document.getElementById(valId).textContent = pct + '%';
+            
+            // Conic Gradient for Donut Chart
+            // Green (Accent) for value, Light Gray for track
+            const donut = document.getElementById(id);
+            // Use CSS var via JS or literal color
+            const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2e7d32';
+            donut.style.background = `conic-gradient(${accent} ${pct}%, #eee 0deg)`;
+        };
+        setDonut('donutTri', 'valTri', output[0]);
+        setDonut('donutSqr', 'valSqr', output[1]);
+        setDonut('donutCir', 'valCir', output[2]);
+    }
+};
+
+// Start
+App.init();
+
+</script>
+</body>
+</html>
